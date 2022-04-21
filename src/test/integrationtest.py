@@ -14,7 +14,10 @@ class ReplicaTestCase(unittest.TestCase):
 
         self.sdeconn = os.environ['SDEFILE']
         self.childsdeconn = os.environ['SDECHILD']
+
         self.geodatabase = gdb.Gdb()
+        self.childfeatureclass = os.path.join(self.childsdeconn
+                                             ,'SOMELINES')
         
         self.replica = replica.Replica(self.geodatabase
                                       ,'TEST_REPLICA')
@@ -42,10 +45,11 @@ class ReplicaTestCase(unittest.TestCase):
             self.testfc.delete()
 
         try:
-            arcpy.Delete_management(os.path.join(self.childsdeconn
-                                                ,'SOMELINES'))
+            arcpy.Delete_management(self.childfeatureclass )
         except:
             pass
+
+        #pass 
 
     def test_acreate(self):
 
@@ -62,6 +66,32 @@ class ReplicaTestCase(unittest.TestCase):
         retval = self.replica.synchronize()
         
         self.assertEqual(retval,'success')      
+
+        parentcount = arcpy.GetCount_management(self.testfc.featureclass)
+        childcount  = arcpy.GetCount_management(self.childfeatureclass)
+        
+        self.assertEqual(parentcount[0]
+                        ,childcount[0])
+
+
+    #def test_csyncsomeupdates(self):
+
+    def test_dsyncsomedeletes(self):
+
+        arcpy.DeleteFeatures_management(self.testfc.featureclass)
+
+        retval = self.replica.synchronize()
+        
+        self.assertEqual(retval,'success')      
+
+        parentcount = arcpy.GetCount_management(self.testfc.featureclass)
+        childcount  = arcpy.GetCount_management(self.childfeatureclass)
+        
+        self.assertEqual(parentcount[0]
+                        ,'0')
+
+        self.assertEqual(childcount[0]
+                        ,'0')
 
 
 if __name__ == '__main__':
