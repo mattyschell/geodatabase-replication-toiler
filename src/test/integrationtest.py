@@ -14,8 +14,6 @@ class ReplicaTestCase(unittest.TestCase):
         self.sdeconn = os.environ['SDEFILE']
         self.childsdeconn = os.environ['SDECHILD']
         self.geodatabase = gdb.Gdb()
-
-        print('creating test replica')
         
         self.replica = replica.Replica(self.geodatabase
                                       ,'TEST_REPLICA')
@@ -51,6 +49,13 @@ class ReplicaTestCase(unittest.TestCase):
                                     ,in_data)
 
         self.assertEqual(retval,'success')
+
+    def test_bsyncnothing(self):
+
+        retval = self.replica.synchronize()
+        
+        self.assertEqual(retval,'success')      
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -10,7 +10,11 @@ Code and helpers for managing ESRI Enterprise Geodatabase replication.  Friends,
 
 ## Create a Replica
 
-This an opinionated wrapper to ESRI arcpy functions.
+This an opinionated wrapper to ESRI arcpy functions. Update the environmentals and good luck to you.
+
+```
+> sample-createreplica.bat
+``` 
 
 ## Integration Test 
 
@@ -18,9 +22,9 @@ The purpose of this test is to set up a simple one way replica, perform some edi
 
 This type of integration test is useful when debugging issues in a complex replica where distinguishing data issues from environment issues is not straightforward. 
 
-Update the script environmentals
+Update the environmentals for the environment to integration test.
 
 ```
-> integrationtest.bat
+> sample-integrationtest.bat
 ``` 
 

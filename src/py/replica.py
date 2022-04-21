@@ -12,11 +12,8 @@ class Replica(object):
 
         self.gdb = gdb
         self.name = name.upper()
-
-    def exists(self):
-
-        pass
-
+        self.fullyqualifiedname = '{0}.{1}'.format(self.gdb.username
+                                                  ,self.name) 
 
     def forceglobalids(self
                       ,in_data):
@@ -32,6 +29,12 @@ class Replica(object):
     def create(self
               ,childsdeconn
               ,in_data):
+
+        self.childsdeconn = childsdeconn
+        desc = arcpy.Describe(self.childsdeconn)
+        connProps = desc.connectionProperties
+        self.fullyqualifiedchildname = '{0}.{1}'.format(connProps.user.upper()
+                                                       ,self.name) 
 
         # check if data is versioned?
 
@@ -50,23 +53,22 @@ class Replica(object):
                                           ,'DO_NOT_GET_RELATED')
 
         except:
-
-            # print('youve got mail')
-            # print(arcpy.GetMessages())
-            # print('end of mail spool')            
+     
             return arcpy.GetMessages(0)
             
         else:
 
             return 'success'
 
-    def delete(self):
+    def synchronize(self):
 
         try:
 
-            arcpy.UnregisterReplica_management(self.gdb.sdeconn
-                                              ,self.name)
-
+            arcpy.SynchronizeChanges_management(self.gdb.sdeconn
+                                                ,self.name
+                                                ,self.childsdeconn
+                                                ,'FROM_GEODATABASE1_TO_2')
+    
         except:
 
             return arcpy.GetMessages(0)
@@ -74,6 +76,38 @@ class Replica(object):
         else:
 
             return 'success'
+
+    def delete(self):
+
+        # one way parent to child, this is "delete"
+        # "If providing the replica name, it must be fully qualified, 
+        # for example, myuser.myreplica"
+
+        try:
+            arcpy.UnregisterReplica_management(self.gdb.sdeconn
+                                              ,self.fullyqualifiedname)
+        except:
+            parentmessages = arcpy.GetMessages(0)
+        else:
+            parentmessages = 'success'
+
+        try:
+            arcpy.UnregisterReplica_management(self.childsdeconn
+                                              ,self.fullyqualifiedchildname)
+        except:
+            childmessages = arcpy.GetMessages(0)
+        else:
+            childmessages = 'success'
+
+        if  parentmessages == 'success' \
+        and childmessages  == 'success':
+            return 'success'
+        else:
+            return '{0}{1}{2}{3}'.format('\n parent: \n '
+                                        ,parentmessages
+                                        ,'\n  child: \n'
+                                        ,childmessages)
+
 
 
 
