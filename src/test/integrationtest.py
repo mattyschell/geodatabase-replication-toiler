@@ -32,7 +32,6 @@ class ReplicaTestCase(unittest.TestCase):
 
         self.geodatabase.importfeatureclass(self.srcshp
                                            ,'SOMELINES')
-
         self.testfc.version()
         
         print('set up complete')
@@ -40,7 +39,7 @@ class ReplicaTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(self):
 
-        self.replica.delete()
+        retval = self.replica.delete()
 
         if self.testfc.exists():
             self.testfc.delete()
@@ -50,8 +49,10 @@ class ReplicaTestCase(unittest.TestCase):
         in_data = []
         in_data.append(self.testfc.featureclass)
 
-        self.replica.create(self.childsdeconn
-                           ,in_data)
+        retval = self.replica.create(self.childsdeconn
+                                    ,in_data)
+
+        self.assertEqual(retval,'success')
 
 if __name__ == '__main__':
     unittest.main()
