@@ -1,6 +1,7 @@
 import os
 import unittest
 import pathlib
+import arcpy
 
 import gdb
 import fc
@@ -39,6 +40,12 @@ class ReplicaTestCase(unittest.TestCase):
 
         if self.testfc.exists():
             self.testfc.delete()
+
+        try:
+            arcpy.Delete_management(os.path.join(self.childsdeconn
+                                                ,'SOMELINES'))
+        except:
+            pass
 
     def test_acreate(self):
 
