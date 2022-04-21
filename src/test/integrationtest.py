@@ -33,8 +33,6 @@ class ReplicaTestCase(unittest.TestCase):
         self.geodatabase.importfeatureclass(self.srcshp
                                            ,'SOMELINES')
         self.testfc.version()
-        
-        print('set up complete')
 
     @classmethod
     def tearDownClass(self):
