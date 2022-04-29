@@ -37,6 +37,8 @@ class Replica(object):
                                                        ,self.name) 
 
         # check if data is versioned?
+        # isVersioned
+        # https://pro.arcgis.com/en/pro-app/latest/arcpy/functions/dataset-properties.htm
 
         self.forceglobalids(in_data)
 

@@ -74,7 +74,11 @@ class ReplicaTestCase(unittest.TestCase):
                         ,childcount[0])
 
 
-    #def test_csyncsomeupdates(self):
+    def test_csyncsomeupdates(self):
+
+        # how to update?
+        pass
+
 
     def test_dsyncsomedeletes(self):
 
@@ -92,6 +96,12 @@ class ReplicaTestCase(unittest.TestCase):
 
         self.assertEqual(childcount[0]
                         ,'0')
+
+    def test_edelete(self):
+
+        self.assertEqual(self.replica.delete()
+                        ,'success')
+                    
 
 
 if __name__ == '__main__':
