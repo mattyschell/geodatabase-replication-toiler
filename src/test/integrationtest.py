@@ -5,7 +5,9 @@ import arcpy
 
 import gdb
 import fc
+import version
 import replica
+import cx_sde
 
 class ReplicaTestCase(unittest.TestCase):
 
@@ -36,20 +38,24 @@ class ReplicaTestCase(unittest.TestCase):
                                            ,'SOMELINES')
         self.testfc.version()
 
+        self.editversion = version.Version(self.geodatabase
+                                          ,'REPLICATOILER')
+
+
     @classmethod
     def tearDownClass(self):
-
+        pass
         retval = self.replica.delete()
 
         if self.testfc.exists():
             self.testfc.delete()
 
         try:
-            arcpy.Delete_management(self.childfeatureclass )
+            arcpy.Delete_management(self.childfeatureclass)
         except:
             pass
 
-        #pass 
+        self.editversion.delete()
 
     def test_acreate(self):
 
@@ -73,14 +79,44 @@ class ReplicaTestCase(unittest.TestCase):
         self.assertEqual(parentcount[0]
                         ,childcount[0])
 
+    def test_csyncversioneddeletes(self):
 
-    def test_csyncsomeupdates(self):
+        self.editversion.create()
 
-        # how to update?
-        pass
+        sql = """BEGIN
+                    sde.version_util.set_current_version('REPLICATOILER');
+                    sde.version_user_ddl.edit_version('REPLICATOILER',1);
+                    -- delete 2965 rows
+                    execute immediate 'delete from '
+                                || '    somelines '
+                                || 'where '
+                                || '    objectid < (select '
+                                || '                    median(objectid) '
+                                || '                from somelines) ';
+                    commit;
+                    sde.version_user_ddl.edit_version('REPLICATOILER',2);
+                    sde.version_util.set_current_version('SDE.DEFAULT');
+                 END;"""
 
+        sdereturn = cx_sde.execute_immediate(self.sdeconn,
+                                             sql)
 
-    def test_dsyncsomedeletes(self):
+        self.editversion.reconcileandpost()
+        
+        retval = self.replica.synchronize()
+
+        parentcount = arcpy.GetCount_management(self.testfc.featureclass)
+        childcount  = arcpy.GetCount_management(self.childfeatureclass)
+
+        #print("parentcount " + parentcount[0])
+        #print("childcount " + childcount[0])
+
+        self.assertEqual(parentcount[0]
+                        ,childcount[0])
+
+       # self.editversion.delete()
+
+    def test_dsyncfulldelete(self):
 
         arcpy.DeleteFeatures_management(self.testfc.featureclass)
 
@@ -97,11 +133,11 @@ class ReplicaTestCase(unittest.TestCase):
         self.assertEqual(childcount[0]
                         ,'0')
 
-    def test_edelete(self):
+    def test_zdelete(self):
 
-        self.assertEqual(self.replica.delete()
-                        ,'success')
-                    
+       self.assertEqual(self.replica.delete()
+                       ,'success')
+                   
 
 
 if __name__ == '__main__':
