@@ -15,20 +15,19 @@ class Replica(object):
         self.fullyqualifiedname = '{0}.{1}'.format(self.gdb.username
                                                   ,self.name) 
 
-    def forceglobalids(self
-                      ,in_data):
-
-        # should do nothing if a globalid managed by ESRI exists
-        # the presence of a column named globalid means nothing
-        # it must be geodatabase-managed
+    def preparedata(self
+                   ,in_data):
 
         for dataset in in_data:
 
             arcpy.AddGlobalIDs_management(dataset)
+            arcpy.RegisterAsVersioned_management(dataset
+                                                ,"NO_EDITS_TO_BASE")
 
     def create(self
               ,childsdeconn
-              ,in_data):
+              ,parent_data_list
+              ,child_data_list):
 
         self.childsdeconn = childsdeconn
         desc = arcpy.Describe(self.childsdeconn)
@@ -36,15 +35,10 @@ class Replica(object):
         self.fullyqualifiedchildname = '{0}.{1}'.format(connProps.user.upper()
                                                        ,self.name) 
 
-        # check if data is versioned?
-        # isVersioned
-        # https://pro.arcgis.com/en/pro-app/latest/arcpy/functions/dataset-properties.htm
-
-        self.forceglobalids(in_data)
+        self.preparedata(child_data_list)
 
         try:
-
-            arcpy.management.CreateReplica(in_data
+            arcpy.management.CreateReplica(parent_data_list
                                           ,'ONE_WAY_REPLICA'
                                           ,childsdeconn
                                           ,self.name
@@ -52,10 +46,13 @@ class Replica(object):
                                           ,'PARENT_DATA_SENDER'
                                           ,'DO_NOT_ADD'
                                           ,'DO_NOT_REUSE'
-                                          ,'DO_NOT_GET_RELATED')
+                                          ,'DO_NOT_GET_RELATED'
+                                          ,''
+                                          ,'DO_NOT_USE_ARCHIVING'
+                                          ,'REGISTER_EXISTING_DATA')
 
         except:
-     
+
             return arcpy.GetMessages(0)
             
         else:
@@ -67,9 +64,11 @@ class Replica(object):
         try:
 
             arcpy.SynchronizeChanges_management(self.gdb.sdeconn
-                                                ,self.name
-                                                ,self.childsdeconn
-                                                ,'FROM_GEODATABASE1_TO_2')
+                                               ,self.name
+                                               ,self.childsdeconn
+                                               ,'FROM_GEODATABASE1_TO_2'
+                                               ,'IN_FAVOR_OF_GDB1'
+                                               ,'BY_OBJECT')
     
         except:
 
@@ -81,7 +80,7 @@ class Replica(object):
 
     def delete(self):
 
-        # one way parent to child, this is "delete"
+        # I guess this is "delete"
         # "If providing the replica name, it must be fully qualified, 
         # for example, myuser.myreplica"
 
@@ -109,7 +108,4 @@ class Replica(object):
                                         ,parentmessages
                                         ,'\n  child: \n'
                                         ,childmessages)
-
-
-
 
