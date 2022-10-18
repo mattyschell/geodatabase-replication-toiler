@@ -78,10 +78,11 @@ class ReplicaTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(self):
  
-        retval = self.replica.delete()
+        pass
+        #retval = self.replica.delete()
         
-        self.parentfc.delete()
-        self.childfc.delete()
+        #self.parentfc.delete()
+        #self.childfc.delete()
 
         self.editversion.delete()
 
@@ -124,21 +125,19 @@ class ReplicaTestCase(unittest.TestCase):
         
         retval = self.replica.synchronize()
 
+        arcpy.management.SelectLayerByAttribute(self.parentfc.featureclass
+                                               ,'NEW_SELECTION'
+                                               ,"created_by = 'THETOIL'")
         parentcount = arcpy.GetCount_management(self.parentfc.featureclass)
-        
-        sql = """select 
-                     count(*) 
-                 from 
-                     somelines 
-                 where 
-                     created_by = 'THETOIL' """
 
-        childcount  = cx_sde.execute_immediate(self.childgeodatabase.sdeconn
-                                              ,sql)
+
+        arcpy.management.SelectLayerByAttribute(self.childfc.featureclass
+                                               ,'NEW_SELECTION'
+                                               ,"created_by = 'THETOIL'")
+        childcount = arcpy.GetCount_management(self.childfc.featureclass)
 
         self.assertEqual(parentcount[0]
-                        ,childcount)
-
+                        ,childcount[0])
 
     def test_csyncversioneddeletes(self):
 
