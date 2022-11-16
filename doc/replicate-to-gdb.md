@@ -1,6 +1,6 @@
-# Replica Setup In The Style That We Know and Love 
+# Replica Setup For a Case With ESRI
 
-This is a demonstration of successful replication from a parent Enterprise Geodatabase to a child file geodatabase using:
+This is a demonstration of the issue replicating from a parent Enterprise Geodatabase to a child file geodatabase using:
 
 * ArcGIS Desktop 10.7.1
     * ArcGIS Desktop 10.7.1 Support for Oracle 19c Patch
