@@ -1,6 +1,6 @@
 # Replica Setup For a Case With ESRI
 
-This is a demonstration of the issue replicating from a parent Enterprise Geodatabase to a child file geodatabase using:
+This is a demonstration of the issue replicating from a parent Enterprise Geodatabase in Oracle to a child file geodatabase using:
 
 * ArcGIS Desktop 10.7.1
     * ArcGIS Desktop 10.7.1 Support for Oracle 19c Patch
@@ -53,4 +53,6 @@ Only the fish tube gets added to the child replica.  Deletes are not deleted.
 
 ![bad](images/bad.png)
 
+As a test, attempt to join parent to child on globalid using ArcMap. Only one record joins, new record that was synchronized. 
 
+![join](images/join.png)
