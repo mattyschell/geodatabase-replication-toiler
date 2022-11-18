@@ -18,7 +18,7 @@ This is an opinionated wrapper to ESRI arcpy functions. Update the environmental
 
 ## Integration Test 
 
-The purpose of this test is to set up a simple one way replica, perform some pretend edits on the parent, and verify that the edits are replicated to the child.
+The purpose of this test is to set up a one way replica, perform some pretend edits on the parent, and verify that the edits are replicated to the child.
 
 This type of integration test is useful when debugging issues in a complex replica where distinguishing data issues from environment issues is not straightforward. 
 

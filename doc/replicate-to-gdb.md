@@ -22,7 +22,7 @@ This is a demonstration of the issue replicating from a parent Enterprise Geodat
 10. Register existing data only 
 11. Choose the child file geodatabase as the "geodatabase to replicate to"
 12. Check "Show Advanced Options"! We are advanced, we simply must see these options.
-13. Choose Simple Model. Do not check "use archiving to track changes."
+13. Choose Full Model. Do not check "use archiving to track changes."
 14. Choose full extent
 15. Uncheck replicate related data
 16. Toggle the amazing "All Records for Tables" toggler so it reads "Schema Only For Tables" which now means the opposite. 
@@ -32,11 +32,10 @@ This is a demonstration of the issue replicating from a parent Enterprise Geodat
 
 ## Fake Edits to Test
 
-1. Edit on the default version, keep it simple
+1. Edit on the default version to simplify the flow
 2. Start editing and delete all subways on Staten Island, they are not real subways. Save edits. 
 3. Add a fish tube feature in the ocean. Save edits 
 4. Stop editing
-5. Delete the edit version
 
 ![edits](images/edits.png)
 

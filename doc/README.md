@@ -16,7 +16,7 @@ These are the high level instructions that OTI uses to create "agency replicas" 
 10. Register existing data only 
 11. Choose the child enterprise geodatabase as the "geodatabase to replicate to"
 12. Check "Show Advanced Options"! We are advanced, we simply must see these options.
-13. Choose Simple Model. Do not check "use archiving to track changes."
+13. Choose Full Model. Do not check "use archiving to track changes."
 14. Choose full extent
 15. Uncheck replicate related data
 16. Toggle the amazing "All Records for Tables" toggler so it reads "Schema Only For Tables" which now means the opposite. 
