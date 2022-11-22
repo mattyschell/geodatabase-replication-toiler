@@ -125,48 +125,48 @@ class ReplicaTestCase(unittest.TestCase):
         else:
             pass
 
-#    def test_bsyncupdates(self):
-#
-#        if self.setupdone == 'Y':
-#
-#            self.editversion.create()
-#
-#            sql = """BEGIN
-#                        sde.version_util.set_current_version('REPLICATOILER');
-#                        sde.version_user_ddl.edit_version('REPLICATOILER',1);
-#                        -- update all rows
-#                        execute immediate 'update '
-#                                       || '    somelines '
-#                                       || 'set created_by = ''THETOIL'' ';
-#                        commit;
-#                        sde.version_user_ddl.edit_version('REPLICATOILER',2);
-#                        sde.version_util.set_current_version('SDE.DEFAULT');
-#                     END;"""
-#
-#            sdereturn = cx_sde.execute_immediate(self.sdeconn
-#                                                ,sql)
-#
-#            self.editversion.reconcileandpost()
-#
-#            retval = self.replica.synchronize()
-#
-#            arcpy.management.SelectLayerByAttribute(self.parentfc.featureclass
-#                                                   ,'NEW_SELECTION'
-#                                                   ,"created_by = 'THETOIL'")
-#            parentcount = arcpy.GetCount_management(self.parentfc.featureclass)
-#
-#
-#            arcpy.management.SelectLayerByAttribute(self.childfc.featureclass
-#                                                   ,'NEW_SELECTION'
-#                                                   ,"created_by = 'THETOIL'")
-#            childcount = arcpy.GetCount_management(self.childfc.featureclass)
-#
-#            self.assertEqual(parentcount[0]
-#                            ,childcount[0])
-#
-#        else:
-#
-#            pass
+    def test_bsyncupdates(self):
+
+        if self.setupdone == 'Y':
+
+            self.editversion.create()
+
+            sql = """BEGIN
+                        sde.version_util.set_current_version('REPLICATOILER');
+                        sde.version_user_ddl.edit_version('REPLICATOILER',1);
+                        -- update all rows
+                        execute immediate 'update '
+                                       || '    somelines '
+                                       || 'set created_by = ''THETOIL'' ';
+                        commit;
+                        sde.version_user_ddl.edit_version('REPLICATOILER',2);
+                        sde.version_util.set_current_version('SDE.DEFAULT');
+                     END;"""
+
+            sdereturn = cx_sde.execute_immediate(self.sdeconn
+                                                ,sql)
+
+            self.editversion.reconcileandpost()
+
+            retval = self.replica.synchronize()
+
+            arcpy.management.SelectLayerByAttribute(self.parentfc.featureclass
+                                                   ,'NEW_SELECTION'
+                                                   ,"created_by = 'THETOIL'")
+            parentcount = arcpy.GetCount_management(self.parentfc.featureclass)
+
+
+            arcpy.management.SelectLayerByAttribute(self.childfc.featureclass
+                                                   ,'NEW_SELECTION'
+                                                   ,"created_by = 'THETOIL'")
+            childcount = arcpy.GetCount_management(self.childfc.featureclass)
+
+            self.assertEqual(parentcount[0]
+                            ,childcount[0])
+
+        else:
+
+            pass
 
 #    def test_csyncversioneddeletes(self):
 #
