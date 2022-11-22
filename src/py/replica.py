@@ -1,55 +1,40 @@
 import arcpy
-#from arcpy import env
 
 import gdb
-
 
 class Replica(object):
 
     def __init__(self
-                ,gdb
+                ,parentgdb
+                ,childgdb
                 ,name):
 
-        self.gdb = gdb
+        self.parentgdb = parentgdb
+        self.childgdb  = childgdb
         self.name = name.upper()
-        self.fullyqualifiedname = '{0}.{1}'.format(self.gdb.username
-                                                  ,self.name) 
 
-    def preparedata(self
-                   ,in_data):
+        self.fullyqualifiedparentname = '{0}.{1}'.format(self.parentgdb.username
+                                                        ,self.name) 
 
-        for dataset in in_data:
-
-            arcpy.AddGlobalIDs_management(dataset)
-            arcpy.RegisterAsVersioned_management(dataset
-                                                ,"NO_EDITS_TO_BASE")
+        self.fullyqualifiedchildname = '{0}.{1}'.format(self.childgdb.username
+                                                        ,self.name) 
 
     def create(self
-              ,childsdeconn
-              ,parent_data_list
-              ,child_data_list):
-
-        self.childsdeconn = childsdeconn
-        desc = arcpy.Describe(self.childsdeconn)
-        connProps = desc.connectionProperties
-        self.fullyqualifiedchildname = '{0}.{1}'.format(connProps.user.upper()
-                                                       ,self.name) 
-
-        self.preparedata(child_data_list)
+              ,data_list):
 
         try:
-            arcpy.management.CreateReplica(parent_data_list
+            arcpy.management.CreateReplica(data_list
                                           ,'ONE_WAY_REPLICA'
-                                          ,childsdeconn
+                                          ,self.childgdb.sdeconn
                                           ,self.name
-                                          ,'SIMPLE'
+                                          ,'FULL'
                                           ,'PARENT_DATA_SENDER'
-                                          ,'DO_NOT_ADD'
+                                          ,'DO_NOT_ADD' 
                                           ,'DO_NOT_REUSE'
                                           ,'DO_NOT_GET_RELATED'
                                           ,''
                                           ,'DO_NOT_USE_ARCHIVING'
-                                          ,'REGISTER_EXISTING_DATA')
+                                          ,'REGISTER_EXISTING_DATA') 
 
         except:
 
@@ -63,9 +48,9 @@ class Replica(object):
 
         try:
 
-            arcpy.SynchronizeChanges_management(self.gdb.sdeconn
+            arcpy.SynchronizeChanges_management(self.parentgdb.sdeconn
                                                ,self.name
-                                               ,self.childsdeconn
+                                               ,self.childgdb.sdeconn
                                                ,'FROM_GEODATABASE1_TO_2'
                                                ,'IN_FAVOR_OF_GDB1'
                                                ,'BY_OBJECT')
@@ -80,23 +65,24 @@ class Replica(object):
 
     def delete(self):
 
-        # I guess this is "delete"
         # "If providing the replica name, it must be fully qualified, 
         # for example, myuser.myreplica"
 
         try:
-            arcpy.UnregisterReplica_management(self.gdb.sdeconn
-                                              ,self.fullyqualifiedname)
+            arcpy.UnregisterReplica_management(self.parentgdb.sdeconn
+                                              ,self.fullyqualifiedparentname)
         except:
             parentmessages = arcpy.GetMessages(0)
+            print(parentmessages)
         else:
             parentmessages = 'success'
 
         try:
-            arcpy.UnregisterReplica_management(self.childsdeconn
-                                              ,self.fullyqualifiedchildname)
+             arcpy.UnregisterReplica_management(self.childgdb.sdeconn
+                                          ,self.fullyqualifiedchildname)
         except:
             childmessages = arcpy.GetMessages(0)
+            print(childmessages)
         else:
             childmessages = 'success'
 

@@ -14,19 +14,27 @@ This is a demonstration of the issue replicating from a parent Enterprise Geodat
 
 ![parent](images/parent.png)
 
-4. Use ArcCatalog to import this feature class from the parent to the child file geodatabase
-6. Open ArcMap.  Add the feature class from the parent Enterprise Geodatabase to the map document.  
+4. Use ArcCatalog to copy and paste this feature class from the parent enterprise geodatabase to the child file geodatabase
+
+     Using any method other than catalog's copy/paste (or the arcpy equivalent) to transfer the data will recreate the issue.
+
+5. Open ArcMap.  
+6. Add the feature class from the parent Enterprise Geodatabase to the map document.  
 7. Add the "Distributed Geodatabase Toolbar" that we know and love
 8. Choose create replica
 9. Choose one-way parent to child
 10. Register existing data only 
 11. Choose the child file geodatabase as the "geodatabase to replicate to"
 12. Check "Show Advanced Options"! We are advanced, we simply must see these options.
-13. Choose Full Model. Do not check "use archiving to track changes."
-14. Choose full extent
-15. Uncheck replicate related data
-16. Toggle the amazing "All Records for Tables" toggler so it reads "Schema Only For Tables" which now means the opposite. 
-17. Next and do nothing
+13. Choose Full Model
+
+    Using simple model here will recreate the issue.
+
+14. Do not check "use archiving to track changes."
+15. Choose full extent
+16. Uncheck replicate related data
+17. Toggle the amazing "All Records for Tables" toggler so it reads "Schema Only For Tables" which now means the opposite. 
+18. Next and do nothing
 
 ![replica](images/replica.png)
 
@@ -48,10 +56,8 @@ This is a demonstration of the issue replicating from a parent Enterprise Geodat
 5. Conflicts in favor of gdb1
 6. Conflicts defined by object
 
+## Original Issue Description: Now Resolved
+
 Only the fish tube gets added to the child replica.  Deletes are not deleted.
 
 ![bad](images/bad.png)
-
-As a test, attempt to join parent to child on globalid using ArcMap. Only one record joins, new record that was synchronized. 
-
-![join](images/join.png)

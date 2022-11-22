@@ -7,20 +7,21 @@ These are the high level instructions that OTI uses to create "agency replicas" 
 1. Import somelines.shp into the parent enterprise geodatabase.  Verify that it does not have a column named globalid.
 2. Add globalids in the parent enterprise geodatabase.
 3. Register as versioned in the parent enterprise geodatabase
-4. Use ArcCatalog (not ArcGIS Pro) to import this feature class from the parent to the child ESRI Enterprise Geodatabase
+4. Use ArcCatalog or ArcGIS Pro to copy and paste this feature class from the parent to the child ESRI Enterprise Geodatabase.  Standard import feature class will not work, this step must use sticky copy.
 5. Register as versioned in the child. ("We have been doing this just to be safe")
-6. Open ArcMap (not ArcGIS Pro).  Add the feature class from the parent Enterprise Geodatabase to the map document.  
-7. Add the "Distributed Geodatabase Toolbar" that we know and love
-8. Choose create replica
-9. Choose one-way parent to child
-10. Register existing data only 
-11. Choose the child enterprise geodatabase as the "geodatabase to replicate to"
-12. Check "Show Advanced Options"! We are advanced, we simply must see these options.
-13. Choose Full Model. Do not check "use archiving to track changes."
-14. Choose full extent
-15. Uncheck replicate related data
-16. Toggle the amazing "All Records for Tables" toggler so it reads "Schema Only For Tables" which now means the opposite. 
-17. Next and do nothing
+6. Open ArcMap, the decriptions below will be for the ArcMap GUI.
+7. Add the feature class from the parent Enterprise Geodatabase to the map document.  
+8. Add the "Distributed Geodatabase Toolbar" that we know and love
+9. Choose create replica
+10. Choose one-way parent to child
+11. Register existing data only 
+12. Choose the child enterprise geodatabase as the "geodatabase to replicate to"
+13. Check "Show Advanced Options"! We are advanced, we simply must see these options.
+14. Choose Full Model. Do not check "use archiving to track changes."
+15. Choose full extent
+16. Uncheck replicate related data
+17. Toggle the amazing "All Records for Tables" toggler so it reads "Schema Only For Tables" which now means the opposite. 
+18. Next and do nothing
 
 ## Fake Edits to Test
 
