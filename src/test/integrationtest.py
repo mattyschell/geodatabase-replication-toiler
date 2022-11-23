@@ -136,7 +136,7 @@ class ReplicaTestCase(unittest.TestCase):
                         sde.version_user_ddl.edit_version('REPLICATOILER',1);
                         -- update all rows
                         execute immediate 'update '
-                                       || '    somelines '
+                                       || '    somelines_evw '
                                        || 'set created_by = ''THETOIL'' ';
                         commit;
                         sde.version_user_ddl.edit_version('REPLICATOILER',2);
@@ -168,43 +168,43 @@ class ReplicaTestCase(unittest.TestCase):
 
             pass
 
-#    def test_csyncversioneddeletes(self):
-#
-#        if self.setupdone == 'Y':
-#
-#            self.editversion.create()
-#
-#            sql = """BEGIN
-#                        sde.version_util.set_current_version('REPLICATOILER');
-#                        sde.version_user_ddl.edit_version('REPLICATOILER',1);
-#                        -- delete 2965 rows
-#                        execute immediate 'delete from '
-#                                    || '    somelines '
-#                                    || 'where '
-#                                    || '    objectid < (select '
-#                                    || '                    median(objectid) '
-#                                    || '                from somelines) ';
-#                        commit;
-#                        sde.version_user_ddl.edit_version('REPLICATOILER',2);
-#                        sde.version_util.set_current_version('SDE.DEFAULT');
-#                     END;"""
-#
-#            sdereturn = cx_sde.execute_immediate(self.sdeconn
-#                                                ,sql)
-#
-#            self.editversion.reconcileandpost()
-#
-#            retval = self.replica.synchronize()
-#
-#            parentcount = arcpy.GetCount_management(self.parentfc.featureclass)
-#            childcount  = arcpy.GetCount_management(self.childfc.featureclass)
-#
-#            self.assertEqual(parentcount[0]
-#                            ,childcount[0])
-#
-#        else:
-#
-#            pass
+    def test_csyncversioneddeletes(self):
+
+        if self.setupdone == 'Y':
+
+            self.editversion.create()
+
+            sql = """BEGIN
+                        sde.version_util.set_current_version('REPLICATOILER');
+                        sde.version_user_ddl.edit_version('REPLICATOILER',1);
+                        -- delete 2965 rows
+                        execute immediate 'delete from '
+                                    || '    somelines_evw '
+                                    || 'where '
+                                    || '    objectid < (select '
+                                    || '                    median(objectid) '
+                                    || '                from somelines_evw) ';
+                        commit;
+                        sde.version_user_ddl.edit_version('REPLICATOILER',2);
+                        sde.version_util.set_current_version('SDE.DEFAULT');
+                     END;"""
+
+            sdereturn = cx_sde.execute_immediate(self.sdeconn
+                                                ,sql)
+
+            self.editversion.reconcileandpost()
+
+            retval = self.replica.synchronize()
+
+            parentcount = arcpy.GetCount_management(self.parentfc.featureclass)
+            childcount  = arcpy.GetCount_management(self.childfc.featureclass)
+
+            self.assertEqual(parentcount[0]
+                            ,childcount[0])
+
+        else:
+
+            pass
 
     def test_dsyncfulldelete(self):
 
