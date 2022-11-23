@@ -4,6 +4,8 @@ import os
 import replica
 import gdb
 
+# have not run this recently leaving  here as ref
+
 
 if __name__ == "__main__":
 
@@ -14,6 +16,8 @@ if __name__ == "__main__":
 
     os.environ['SDEFILE'] = parentsdeconn
     parentgdb = gdb.Gdb()
+    os.environ['SDEFILE'] = childsdeconn
+    childgdb = gdb.Gdb()
 
     # slow and steady so we can read it later
 
@@ -25,10 +29,10 @@ if __name__ == "__main__":
                                             ,featureclass))
                   
     babyreplica = replica.Replica(parentgdb
+                                 ,childgdb
                                  ,replicaname)
 
-    retval = babyreplica.create(childsdeconn
-                               ,featureclasslist)
+    retval = babyreplica.create(featureclasslist)
 
     if retval == 'success':
         exit(0)
