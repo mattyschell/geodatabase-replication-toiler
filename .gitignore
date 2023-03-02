@@ -3,3 +3,4 @@ __pycache__
 scratch
 integrationtest_*
 *.bat
+*load2*
