@@ -2,5 +2,6 @@
 __pycache__
 scratch
 integrationtest_*
-*.bat
+replicate-subaddress.bat
+*-integrationtest.bat
 *load2*

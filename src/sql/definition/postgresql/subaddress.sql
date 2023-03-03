@@ -1,7 +1,8 @@
 -- the source cscl database is completely unconstrained
 -- it relies on application code to enforce data integrity
 -- we will engage in some basic best practices here
-drop table if exists subaddress;
+-- drop in dev only.  Will be versioned and registered in real child
+-- drop table if exists subaddress;
 create table subaddress (
 	sub_address_id          int4 constraint subaddress_pkc primary key,
 	melissa_suite           varchar(50) not null,
@@ -24,4 +25,4 @@ create table subaddress (
 	globalid                varchar(38) not null default '{00000000-0000-0000-0000-000000000000}'::character varying,
     constraint subaddress_objectid_uqc unique(objectid)
 );
-grant select on subaddress to "pscscl";
+--no grants, grant in esrification

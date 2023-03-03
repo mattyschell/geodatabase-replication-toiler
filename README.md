@@ -34,3 +34,20 @@ Update the environmentals for the environment you wish to integration test.
 > sample-integrationtest.bat
 ``` 
 
+## Miscellaneous Toil
+
+### Replicate Subaddresses
+
+We maintain the subaddress table in the citywide street centerline database outside of the main desktop tools and tickets.  It contains a few million records and we do not allow it to parcipate in the standard replication workflow.
+
+Prerequisites
+   * [geodatabase-toiler](https://github.com/mattyschell/geodatabase-toiler) on PYTHONPATH
+   * SQL*Plus on PATH
+   * psql on PATH
+
+To completely refresh the subaddress table in a child enterprise geodatabase PostgreSQL replica from a parent Oracle geodatabase copy geodatabase-scripts\sample-replicate-subaddress.bat out to another directory. Review and update the environmentals in the script. 
+
+```
+> replicate-subaddress.bat
+```
+
