@@ -1,3 +1,5 @@
+select 'SET client_min_messages = ''ERROR'';' from dual;
+select 'truncate table subaddress;' from dual;
 select 'insert into subaddress values ('
      || sub_address_id
      || ',''' || melissa_suite || ''''
@@ -35,6 +37,9 @@ select 'insert into subaddress values ('
      || ',''' || globalid || ''''
      || ');'
 from 
-    cscl.subaddress_evw;
+    cscl.subaddress_evw
+where 
+    ap_id is not null
+and sub_address_id is not null;
 
    

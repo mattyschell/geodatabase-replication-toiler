@@ -1,7 +1,7 @@
 -- the source cscl database is completely unconstrained
 -- it relies on application code to enforce data integrity
 -- we will engage in some basic best practices here
-drop table subaddress if exists;
+drop table if exists subaddress;
 create table subaddress (
 	sub_address_id          int4 constraint subaddress_pkc primary key,
 	melissa_suite           varchar(50) not null,
