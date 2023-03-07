@@ -52,7 +52,7 @@ select '('
 from 
     subaddress_valid
 where 
-    objectid < (select median(objectid) from subaddress_valid)
+    sub_address_id < (select median(sub_address_id) from subaddress_valid)
 union all
 select '('
      || sub_address_id
@@ -92,7 +92,7 @@ select '('
      || ');' -- last line semicolon
 from 
     subaddress_valid
-where objectid = (select median(objectid) from subaddress_valid);
+where sub_address_id = (select median(sub_address_id) from subaddress_valid);
 select 'commit;' from dual;
 select 'insert into subaddress values ' from dual;
 with subaddress_valid
@@ -143,7 +143,8 @@ select '('
 from 
     subaddress_valid
 where 
-    objectid > (select median(objectid) from subaddress_valid)
+    sub_address_id > (select median(sub_address_id) from subaddress_valid)
+and sub_address_id <> (select max(sub_address_id) from subaddress_valid)
 union all
 select '('
      || sub_address_id
@@ -183,5 +184,5 @@ select '('
      || ');' -- last line semicolon
 from 
     subaddress_valid
-where objectid = (select max(objectid) from subaddress_valid);
+where sub_address_id = (select max(sub_address_id) from subaddress_valid);
 select 'commit;' from dual;
