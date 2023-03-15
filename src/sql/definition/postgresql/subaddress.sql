@@ -4,7 +4,7 @@
 -- drop in dev only.  Will be versioned and registered in real child
 -- drop table if exists subaddress;
 create table subaddress (
-	sub_address_id          int4 constraint subaddress_pkc primary key,
+	sub_address_id          int4 not null,
 	melissa_suite           varchar(50) not null,
 	ap_id                   int4 not null,
 	additional_loc_info     varchar(50) null,
@@ -21,8 +21,8 @@ create table subaddress (
 	validation_date         varchar(50) null,
 	update_source           varchar(50) null,
 	usps_hnum               varchar(50) null,
-	objectid                int4 not null,
+	objectid                int4 constraint objectid primary key,
 	globalid                varchar(38) not null default '{00000000-0000-0000-0000-000000000000}'::character varying,
-    constraint subaddress_objectid_uqc unique(objectid)
+    constraint sub_address_id_uqc unique(sub_address_id)
 );
 --no grants, grant in esrification
