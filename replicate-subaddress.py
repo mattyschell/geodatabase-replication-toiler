@@ -3,7 +3,8 @@ import os
 
 import gdb
 import fc
-import  arcpy
+import cx_sde
+import arcpy
 
 # 1. replicate-subaddress.py: TEARDOWN 
 # 2. SQLPlus export from oracle
@@ -46,13 +47,28 @@ def esrify(childgeodatabase
                                      ,'GRANT'
                                      ,'AS_IS')
 
-    return 0
+    return subaddressfeaturetable
+
+def qa(parentconn
+      ,childconn
+      ,basetablename):
+
+    sql = 'select count(*) from cscl.{0}_evw'.format(basetablename)
+
+    parentkount = cx_sde.selectavalue(parentconn
+                                     ,sql)
+
+    childkount = cx_sde.selectavalue(childconn
+                                     ,sql)
+
+    return (parentkount - childkount)
     
 
 if __name__ == "__main__":
 
-    module    = sys.argv[1]
-
+    module        = sys.argv[1]
+    parentsdeconn = sys.argv[2]
+         
     childsdeconn     = os.environ['SDEFILE']
     childgeodatabase = gdb.Gdb(database='postgres')
     featuretablename = 'subaddress'
@@ -68,9 +84,17 @@ if __name__ == "__main__":
 
     else:
 
-        retval = esrify(childgeodatabase
-                       ,featuretablename
-                       ,featuretableuser)
+        subaddressfeaturetable = esrify(childgeodatabase
+                                       ,featuretablename
+                                       ,featuretableuser)
 
+        qaresult = qa(parentsdeconn
+                     ,childsdeconn
+                     ,featuretablename)
+
+        if qaresult != 0:
+            raise ValueError('Difference of {0} in record counts '.format(qaresult) \
+                           + 'comparing {0} in '.format(featuretablename) \
+                           + '{0} vs {1}'.format(parentsdeconn,childsdeconn))
 
     exit(0)

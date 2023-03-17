@@ -17,7 +17,7 @@ SET PGSSLMODE=allow
 SET PYTHONPATH=%BASEPATH%geodatabase-toiler\src\py;%BASEPATH%geodatabase-replication-toiler
 SET PROPY=c:\Progra~1\ArcGIS\Pro\bin\Python\scripts\propy.bat
 echo starting up our work exporting subaddresses from %SOURCEDATABASE% on %date% at %time% > %BATLOG%
-CALL %PROPY% replicate-subaddress.py "teardown" && (
+CALL %PROPY% replicate-subaddress.py "teardown" %PARENTSDEFILE% && (
   echo. >> %BATLOG% && echo deleted subaddress from the child geodatabase on %date% at %time% >> %BATLOG%
 ) || (
   echo. >> %BATLOG% && echo Failed to delete subaddress from the child geodatabase on %date% at %time% && EXIT /B 1
@@ -27,7 +27,7 @@ sqlplus %SOURCESCHEMA%/%SOURCEPASSWORD%@%SOURCEDATABASE% @subaddress_spool2postg
 CD ..\..\..\..\
 psql --quiet -f src\sql\definition\postgresql\subaddress.sql
 psql --quiet -f src\sql\data\oracle\subaddress_load2postgres.sql
-CALL %PROPY% replicate-subaddress.py "esrify" && (
+CALL %PROPY% replicate-subaddress.py "esrify" %PARENTSDEFILE% && (
   echo. >> %BATLOG% && echo esrified subaddress in the child geodatabase on %date% at %time% >> %BATLOG%
 ) || (
   echo. >> %BATLOG% && echo Failed to esrify subaddress in the child geodatabase on %date% at %time% && EXIT /B 1
