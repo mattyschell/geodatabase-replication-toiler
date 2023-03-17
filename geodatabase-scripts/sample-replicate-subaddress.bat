@@ -10,6 +10,7 @@ SET PGUSER=xxxx@psql-xxxx
 SET PGPASSWORD=xxxx
 SET PGHOST=psql-xxxx.postgres.database.azure.com
 REM review these
+SET COMMITSIZE=100000
 SET TARGETLOGDIR=%BASEPATH%\geodatabase-scripts\logs\
 SET BATLOG=%TARGETLOGDIR%replicate-subaddress-%PGUSER%.log
 SET PGPORT=5432
@@ -26,7 +27,7 @@ CD src\sql\data\oracle\
 sqlplus %SOURCESCHEMA%/%SOURCEPASSWORD%@%SOURCEDATABASE% @subaddress_spool2postgres.sql
 CD ..\..\..\..\
 psql --quiet -f src\sql\definition\postgresql\subaddress.sql
-psql --quiet -f src\sql\data\oracle\subaddress_load2postgres.sql
+psql --quiet -f src\sql\data\oracle\subaddress_load2postgres_chunked.sql
 CALL %PROPY% replicate-subaddress.py "esrify" %PARENTSDEFILE% && (
   echo. >> %BATLOG% && echo esrified subaddress in the child geodatabase on %date% at %time% >> %BATLOG%
 ) || (
