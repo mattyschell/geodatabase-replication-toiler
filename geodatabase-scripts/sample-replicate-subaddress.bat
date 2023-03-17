@@ -26,6 +26,11 @@ CALL %PROPY% replicate-subaddress.py "teardown" %PARENTSDEFILE% && (
 CD src\sql\data\oracle\
 sqlplus %SOURCESCHEMA%/%SOURCEPASSWORD%@%SOURCEDATABASE% @subaddress_spool2postgres.sql
 CD ..\..\..\..\
+CALL %PROPY% .\src\py\chunkify.py .\src\sql\data\oracle\subaddress_load2postgres.sql .\src\sql\data\oracle\subaddress_load2postgres_chunked.sql %COMMITSIZE% && (
+  echo. >> %BATLOG% && echo chunked subaddress load into commit blocks of %COMMITSIZE% rows on %date% at %time% >> %BATLOG%
+) || (
+  echo. >> %BATLOG% && echo Failed to chunk subaddress load on %date% at %time% && EXIT /B 1
+)
 psql --quiet -f src\sql\definition\postgresql\subaddress.sql
 psql --quiet -f src\sql\data\oracle\subaddress_load2postgres_chunked.sql
 CALL %PROPY% replicate-subaddress.py "esrify" %PARENTSDEFILE% && (
