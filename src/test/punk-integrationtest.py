@@ -1,7 +1,5 @@
 import os
 import unittest
-import pathlib
-import arcpy
 
 import punkreplica
 
@@ -20,12 +18,6 @@ class ReplicaTestCase(unittest.TestCase):
                                           ,self.childgdb
                                           ,'punk')
 
-        #self.parentfc = fc.Fc(self.geodatabase
-        #                     ,'SOMELINES')
-
-        #self.childfc = fc.Fc(self.childgeodatabase
-        #                    ,'SOMELINES')
-
 
     @classmethod
     def tearDownClass(self):
@@ -39,6 +31,8 @@ class ReplicaTestCase(unittest.TestCase):
         retval = self.replica.create()
         
         self.assertEqual(retval,'success')      
+
+        #todo: finish test
 
         #parentcount = arcpy.GetCount_management(self.parentfc.featureclass)
         #childcount  = arcpy.GetCount_management(self.childfc.featureclass)
