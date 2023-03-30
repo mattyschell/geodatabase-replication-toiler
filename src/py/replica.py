@@ -79,7 +79,7 @@ class Replica(object):
 
         try:
              arcpy.UnregisterReplica_management(self.childgdb.sdeconn
-                                          ,self.fullyqualifiedchildname)
+                                               ,self.fullyqualifiedchildname)
         except:
             childmessages = arcpy.GetMessages(0)
             print(childmessages)
