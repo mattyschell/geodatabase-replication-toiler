@@ -1,21 +1,19 @@
-import arcpy
 import os
-import glob
 import shutil
-# import zipfile
-# import gdb
+
+# loosely follows standard replica wrapper
+# punk replicas are ephemeral
 
 class Replica(object):
 
     def __init__(self
                 ,parentgdb # D:\temp\parent\cscl.gdb
                 ,childgdb  # D:\temp\child\cscl.gdb
-                ,name):    # PUNK
+                ,name):    # punk
 
         self.parentgdb = parentgdb
         self.childgdb  = childgdb
         self.name      = name
-
         
         #punkcscl.gdb
         punkgdb = '{0}{1}'.format(self.name,os.path.basename(self.parentgdb))
@@ -31,7 +29,7 @@ class Replica(object):
 
         # in a punk geodatabase replica creation is zipping 
         # a file geodatabase. PUNK AF
-        # no data list input, full geodatabase or go home
+        # no data list inputs, replicate the full geodatabase or go home
 
         try:
             if not (os.path.exists(self.parentgdb)):
@@ -51,51 +49,73 @@ class Replica(object):
             
         else:
 
-            return 'success'
+            if not (os.path.exists('{0}.{1}'.format(self.fullyqualifiedparentname
+                                                   ,'zip'))):
+                
+                return 'fail'
+
+            else:
+
+                return 'success'
 
     def synchronize(self):
 
-        try:
+        # create
+        # D:\temp\parent\cscl.gdb
+        # D:\temp\parent\punkcscl.gdb.zip
 
-            pass
-    
-        except:
+        if (self.create() == 'success'):
 
-            return 'fail'
+            if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedchildname
+                                               ,'zip'))):
 
-        else:
+                # not strictly necessary
+                os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
+                                          ,'zip'))
+
+            # copy to D:\temp\child\punkcscl.gdb.zip 
+
+            shutil.copy('{0}.{1}'.format(self.fullyqualifiedparentname
+                                        ,'zip')
+                       ,'{0}.{1}'.format(self.fullyqualifiedchildname
+                                        ,'zip')
+                       )
+       
+            # unzip to 
+            # D:\temp\child\punkcscl.gdb 
+
+            if (os.path.exists(self.fullyqualifiedchildname)):
+
+                # not strictly necessary
+                shutil.rmtree(self.fullyqualifiedchildname)                    
+
+            shutil.unpack_archive('{0}.{1}'.format(self.fullyqualifiedchildname
+                                                  ,'zip')
+                                 ,self.fullyqualifiedchildname
+                                 ,'zip')
+
+            # synchronize! :-)
+            # copy D:\temp\child\punkcscl.gdb
+            # to   D:\temp\child\cscl.gdb
+
+            if (os.path.exists(self.childgdb)):
+
+                shutil.rmtree(self.childgdb)
+
+            shutil.copytree(self.fullyqualifiedchildname
+                           ,self.childgdb)
 
             return 'success'
 
-    def delete(self):
+        return 'fail'
 
-        # "If providing the replica name, it must be fully qualified, 
-        # for example, myuser.myreplica"
+    #def delete(self):
 
-        try:
-            pass
-            #arcpy.UnregisterReplica_management(self.parentgdb.sdeconn
-            #                                  ,self.fullyqualifiedparentname)
-        except:
-            parentmessages = 'fail'
-        else:
-            parentmessages = 'success'
+    #    shutil.rmtree(self.childgdb)
+    #    shutil.rmtree(self.fullyqualifiedchildname) 
+    #    os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
+    #                              ,'zip'))
+    #    os.remove('{0}.{1}'.format(self.fullyqualifiedparentname
+    #                              ,'zip'))
 
-        try:
-            pass
-            #arcpy.UnregisterReplica_management(self.childgdb.sdeconn
-            #                             ,self.fullyqualifiedchildname)
-        except:
-            childmessages = 'fail'
-        else:
-            childmessages = 'success'
-
-        if  parentmessages == 'success' \
-        and childmessages  == 'success':
-            return 'success'
-        else:
-            return '{0}{1}{2}{3}'.format('\n parent: \n '
-                                        ,parentmessages
-                                        ,'\n  child: \n'
-                                        ,childmessages)
-
+    #    return 'success'

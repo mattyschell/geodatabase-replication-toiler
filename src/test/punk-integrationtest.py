@@ -1,6 +1,7 @@
 import os
 import unittest
 
+import arcpy
 import punkreplica
 
 class ReplicaTestCase(unittest.TestCase):
@@ -11,6 +12,9 @@ class ReplicaTestCase(unittest.TestCase):
         self.parentgdb = os.environ['SDEPARENT']
         self.childgdb  = os.environ['SDECHILD']
 
+        self.parentfeatureclass = os.path.join(self.parentgdb
+                                              ,os.environ['TARGETFC'])
+
         self.childfeatureclass = os.path.join(self.childgdb
                                              ,os.environ['TARGETFC'])
         
@@ -18,27 +22,27 @@ class ReplicaTestCase(unittest.TestCase):
                                           ,self.childgdb
                                           ,'punk')
 
-
     @classmethod
     def tearDownClass(self):
  
         pass
-        #retval = self.replica.delete()
+        #self.assertEqual(self.replica.delete(),'success')
 
 
     def test_acreate(self):
 
-        retval = self.replica.create()
+        self.assertEqual(self.replica.create(),'success')      
+
+
+    def test_bsynchronize(self):
+
+        self.assertEqual(self.replica.synchronize(),'success')
         
-        self.assertEqual(retval,'success')      
-
-        #todo: finish test
-
-        #parentcount = arcpy.GetCount_management(self.parentfc.featureclass)
-        #childcount  = arcpy.GetCount_management(self.childfc.featureclass)
+        parentcount = arcpy.GetCount_management(self.parentfeatureclass)
+        childcount  = arcpy.GetCount_management(self.childfeatureclass)
      
-        #self.assertEqual(parentcount[0]
-        #                ,childcount[0])
+        self.assertEqual(parentcount[0]
+                        ,childcount[0])
 
 if __name__ == '__main__':
     unittest.main()
