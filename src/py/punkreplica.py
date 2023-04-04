@@ -31,32 +31,26 @@ class Replica(object):
         # a file geodatabase. PUNK AF
         # no data list inputs, replicate the full geodatabase or go home
 
-        try:
-            if not (os.path.exists(self.parentgdb)):
-                return 'fail parent {0} doesnt exist'.format(self.parentgdb)
+        if not (os.path.exists(self.parentgdb)):
+
+            return 'fail parent {0} doesnt exist'.format(self.parentgdb)
+        
+        if os.path.exists(self.fullyqualifiedparentname):
             
-            if os.path.exists(self.fullyqualifiedparentname):
-                
-                os.remove(self.fullyqualifiedparentname)
+            os.remove(self.fullyqualifiedparentname)
 
-            shutil.make_archive(self.fullyqualifiedparentname
-                                ,'zip'
-                                ,self.parentgdb)
+        shutil.make_archive(self.fullyqualifiedparentname
+                            ,'zip'
+                            ,self.parentgdb)
 
-        except:
-
+        if not (os.path.exists('{0}.{1}'.format(self.fullyqualifiedparentname
+                                                ,'zip'))):
+            
             return 'fail'
-            
+
         else:
 
-            if not (os.path.exists('{0}.{1}'.format(self.fullyqualifiedparentname
-                                                   ,'zip'))):
-                
-                return 'fail'
-
-            else:
-
-                return 'success'
+            return 'success'
 
     def synchronize(self):
 
