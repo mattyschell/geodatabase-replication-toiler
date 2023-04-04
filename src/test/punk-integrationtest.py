@@ -25,14 +25,11 @@ class ReplicaTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(self):
  
-        pass
-        #self.assertEqual(self.replica.delete(),'success')
-
+        self.replica.delete()
 
     def test_acreate(self):
 
         self.assertEqual(self.replica.create(),'success')      
-
 
     def test_bsynchronize(self):
 
@@ -43,6 +40,14 @@ class ReplicaTestCase(unittest.TestCase):
      
         self.assertEqual(parentcount[0]
                         ,childcount[0])
+
+    def test_cdelete(self):
+ 
+        self.replica.delete()
+
+        # test that delete is ok with nonexistent files
+        self.replica.delete()
+
 
 if __name__ == '__main__':
     unittest.main()

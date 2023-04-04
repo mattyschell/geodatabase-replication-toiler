@@ -109,13 +109,20 @@ class Replica(object):
 
         return 'fail'
 
-    #def delete(self):
+    def delete(self):
 
-    #    shutil.rmtree(self.childgdb)
-    #    shutil.rmtree(self.fullyqualifiedchildname) 
-    #    os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
-    #                              ,'zip'))
-    #    os.remove('{0}.{1}'.format(self.fullyqualifiedparentname
-    #                              ,'zip'))
+        if (os.path.exists(self.childgdb)):
+            shutil.rmtree(self.childgdb)
 
-    #    return 'success'
+        if (os.path.exists(self.fullyqualifiedchildname)):
+            shutil.rmtree(self.fullyqualifiedchildname) 
+
+        if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedchildname
+                                           ,'zip'))):
+            os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
+                                      ,'zip'))
+                                      
+        if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedparentname
+                                           ,'zip'))):
+            os.remove('{0}.{1}'.format(self.fullyqualifiedparentname
+                                      ,'zip'))

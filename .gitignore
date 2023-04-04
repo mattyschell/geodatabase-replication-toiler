@@ -5,3 +5,4 @@ integrationtest_*
 replicate-subaddress.bat
 *-integrationtest.bat
 *load2*
+*.bat
