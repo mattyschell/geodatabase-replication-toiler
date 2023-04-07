@@ -29,7 +29,7 @@ if __name__ == "__main__":
                                                             ,babypunkreplica.parentgdb))
 
     # Possible
-    # PermissionError: [Errno 13] Permission denied: '_gdb.T2UA64237XN.1812.41680.sr.lock'
+    # PermissionError: [Errno 13] Permission denied: '_gdb.xxxxx.1812.41680.sr.lock'
     retval = babypunkreplica.create()
 
     if retval != 'success':        

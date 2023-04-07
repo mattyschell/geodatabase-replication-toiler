@@ -1,6 +1,8 @@
 import os
 import shutil
 
+import arcpy
+
 # loosely follows standard replica wrapper
 # punk replicas are ephemeral
 
@@ -120,3 +122,16 @@ class Replica(object):
                                            ,'zip'))):
             os.remove('{0}.{1}'.format(self.fullyqualifiedparentname
                                       ,'zip'))
+
+    def compare(self
+               ,featurelayer):
+
+        parentfeatureclass = os.path.join(self.parentgdb
+                                         ,featurelayer)
+
+        childfeatureclass = os.path.join(self.childgdb
+                                         ,featurelayer)
+        
+        return (int(arcpy.management.GetCount(parentfeatureclass)[0]) - \
+                int(arcpy.management.GetCount(childfeatureclass)[0]))
+   

@@ -9,14 +9,15 @@ class ReplicaTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(self):
 
-        self.parentgdb = os.environ['SDEPARENT']
-        self.childgdb  = os.environ['SDECHILD']
+        self.parentgdb    = os.environ['SDEPARENT']
+        self.childgdb     = os.environ['SDECHILD']
+        self.featureclass = os.environ['TARGETFC']
 
         self.parentfeatureclass = os.path.join(self.parentgdb
-                                              ,os.environ['TARGETFC'])
+                                              ,self.featureclass)
 
         self.childfeatureclass = os.path.join(self.childgdb
-                                             ,os.environ['TARGETFC'])
+                                             ,self.featureclass)
         
         self.replica = punkreplica.Replica(self.parentgdb
                                           ,self.childgdb
@@ -35,13 +36,20 @@ class ReplicaTestCase(unittest.TestCase):
 
         self.assertEqual(self.replica.synchronize(),'success')
         
-        parentcount = arcpy.GetCount_management(self.parentfeatureclass)
-        childcount  = arcpy.GetCount_management(self.childfeatureclass)
+        parentcount = arcpy.management.GetCount(self.parentfeatureclass)
+        childcount  = arcpy.management.GetCount(self.childfeatureclass)
      
         self.assertEqual(parentcount[0]
                         ,childcount[0])
 
-    def test_cdelete(self):
+    def test_ccompare(self):
+
+        self.assertEqual(self.replica.synchronize(),'success')
+
+        self.assertEqual(self.replica.compare(self.featureclass)
+                        ,0)
+
+    def test_ddelete(self):
  
         self.replica.delete()
 

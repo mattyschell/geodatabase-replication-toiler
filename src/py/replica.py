@@ -1,6 +1,5 @@
 import arcpy
 
-import gdb
 
 class Replica(object):
 
@@ -73,7 +72,7 @@ class Replica(object):
                                               ,self.fullyqualifiedparentname)
         except:
             parentmessages = arcpy.GetMessages(0)
-            print(parentmessages)
+            # print(parentmessages)
         else:
             parentmessages = 'success'
 
@@ -82,7 +81,7 @@ class Replica(object):
                                                ,self.fullyqualifiedchildname)
         except:
             childmessages = arcpy.GetMessages(0)
-            print(childmessages)
+            #print(childmessages)
         else:
             childmessages = 'success'
 
