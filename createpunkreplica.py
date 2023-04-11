@@ -4,7 +4,6 @@ import time
 import logging
 
 import punkreplica
-#import gdb
 
 
 if __name__ == "__main__":

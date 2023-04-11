@@ -1,7 +1,10 @@
 import os
 import shutil
-
 import arcpy
+
+# todo: get this outta here
+import cx_sde
+
 
 # loosely follows standard replica wrapper
 # punk replicas are ephemeral
@@ -126,12 +129,37 @@ class Replica(object):
     def compare(self
                ,featurelayer):
 
-        parentfeatureclass = os.path.join(self.parentgdb
-                                         ,featurelayer)
+        # this is a hack (on top of a hack), see refactoring issue
+        # accept either cscl.centerline or centerline for featurelayer
 
+        # little punk kids never have schemas
         childfeatureclass = os.path.join(self.childgdb
-                                         ,featurelayer)
+                                         ,featurelayer.split('.')[-1])
+                                         
+        #print('childfeatureclass {0}'.format(childfeatureclass))
+
+        childkount = int(arcpy.management.GetCount(childfeatureclass)[0])
+
+        # either featurelayer formats are responsible parents  
+        # but we can't use arcpy 3 to access CSCL!    
+
+        if "." in featurelayer:  
+
+            sql = 'SELECT count(*) FROM {0}_evw'.format(featurelayer)
+            
+            #print('sql {0}'.format(sql))
+
+            parentkount = cx_sde.selectavalue(self.parentgdb
+                                             ,sql)
+
+        else: 
         
-        return (int(arcpy.management.GetCount(parentfeatureclass)[0]) - \
-                int(arcpy.management.GetCount(childfeatureclass)[0]))
+            parentfeatureclass = os.path.join(self.parentgdb
+                                             ,featurelayer)
+                                             
+            # print('parentfeatureclass {0}'.format(parentfeatureclass))
+                                             
+            parentkount = int(arcpy.management.GetCount(parentfeatureclass)[0]) 
+
+        return (parentkount - childkount)
    

@@ -31,10 +31,17 @@ if __name__ == "__main__":
 
     for featurelayer in playerlist.split(','):
         
-        kount = checkreplica.compare(featurelayer)
+        try:
+            
+            kount = checkreplica.compare(featurelayer)
 
-        if kount > 0:
+            if kount > 0:
+                result = 'fail'
+
+        except:
+
             result = 'fail'
+            kount  = 'unknown'
 
         logging.info('| {0} | {1} | '.format(featurelayer,kount))
 
