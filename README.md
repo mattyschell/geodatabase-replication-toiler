@@ -56,16 +56,16 @@ To completely refresh the subaddress table in a child enterprise geodatabase Pos
 
 If your replica is a little punk you may need to fall back on copying file geodatabases around.
 
-Test. Uses the geodatabase under src/test/resources/parent/
+Test. Uses the little geodatabase under src/test/resources/parent/
 
 ```
 > sample-punk-integrationtest.bat
 ```
 
-Punk replicate.  Update the environmentals and rename.
+Replicate the little punk.  Copy this file out to your script directory and update the environmentals
 
 ```
-> sample-create-punk-replica.bat
+> geodatabase-scripts/sample-create-punk-replica.bat
 ``` 
 
 
