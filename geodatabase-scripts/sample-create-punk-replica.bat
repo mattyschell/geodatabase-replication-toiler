@@ -2,6 +2,7 @@ REM set these
 set SDEPARENT=X:\xxxx\xxxx.gdb
 set SDECHILD=X:\xxxx\xxxx.gdb
 set REPLICANAME=xxxxx
+set ENV=development
 set REPLICACOMPARE=x:\xxx\connections\xx\xxxx.sde
 set REPLICACHECKLAYERS=Centerline,Addresspoint
 set GRANDPARENTLAYERS=cscl.Centerline,cscl.Addresspoint
@@ -31,8 +32,8 @@ echo. >> %BATLOG% && echo checking %SDEPARENT% comparing to %SDECHILD% on %date%
   %PROPY% %REPLICATOILER%\notify.py ": Failed to pass check %SDEPARENT% to %SDECHILD%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
 )  
 echo. >> %BATLOG% && echo checking %REPLICACOMPARE% comparing to %SDECHILD% on %date% at %time% >> %BATLOG%
-%PROPY% %GISDIR%\geodatabase-replication-toiler\checkreplica.py %REPLICACOMPARE% %SDECHILD% %REPLICANAME% %GRANDPARENTLAYERS% && (
-  %PROPY% %REPLICATOILER%\notify.py ": passed comparison of %REPLICACOMPARE% to %SDECHILD%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
+%PROPY% %GISDIR%\geodatabase-replication-toiler\checkreplica.py %REPLICACOMPARE% %SDECHILD% %REPLICANAME% %REPLICACHECKLAYERS% && (
+  %PROPY% %REPLICATOILER%\notify.py "Passed %REPLICANAME% replica comparison in %ENV%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
 ) || (
-  %PROPY% %REPLICATOILER%\notify.py ": QA comparison of %REPLICACOMPARE% to %SDECHILD%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
+  %PROPY% %REPLICATOILER%\notify.py "Failed %REPLICANAME% replica comparison in %ENV%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
 )  

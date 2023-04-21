@@ -2,6 +2,7 @@ import sys
 import os
 import logging
 import time 
+import socket
 
 import punkreplica
 
@@ -26,8 +27,7 @@ if __name__ == "__main__":
 
     result = 'pass'
 
-    logging.info('| featurelayer | rowcountdifference |')
-    logging.info('| --- | --- |')
+    logging.info('   | featurelayer | rowcountdifference |   ')
 
     for featurelayer in playerlist.split(','):
         
@@ -43,9 +43,18 @@ if __name__ == "__main__":
             result = 'fail'
             kount  = 'unknown'
 
-        logging.info('| {0} | {1} | '.format(featurelayer,kount))
+        logging.info('   ')
+        logging.info('   | {0} | {1} |   '.format(featurelayer,kount))
+        
 
-
+    logging.info('   ')
+    logging.info('   replica QA result: {0}   '.format(result))
+    logging.info('   ')
+    logging.info('   comparing parent {0} to child {1}    '.format(pparent,pchild))
+    logging.info('   ')
+    logging.info('   running from {0}   '.format(socket.gethostname()))
+    logging.info('   ')
+    
     if result == 'pass':
         exit(0)
     else:

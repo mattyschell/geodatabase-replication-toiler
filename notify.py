@@ -36,17 +36,25 @@ if __name__ == "__main__":
 
     msg = EmailMessage()
 
-    # notification is like "importing buildings onto dev.sde"
+    # notification is like "Passed replica comparison in dev"
 
-    content  = 'Completed {0} '.format(notification)
+    content  = '{0}    '.format(notification)
     msg['Subject'] = content
     content += 'at {0} {1}'.format(datetime.datetime.now()
                                   ,os.linesep)
 
-    content += '\n\n' + getlogfile(logdir
-                                  ,plogtype)   
+    content += '{0}'.format(os.linesep) \
+            +  getlogfile(logdir
+                         ,plogtype)   
     
-    msg.set_content(content)    
+    content += '{0}Brought to you by your comrades at {1}{2}'.format(os.linesep
+                                                                    ,emailfrom
+                                                                    ,os.linesep)
+    content += 'and {0}'.format('https://github.com/mattyschell/geodatabase-replication-toiler')
+
+    
+    msg.set_content(content)  
+
     msg['From'] = emailfrom
 
     # this is headers only 
