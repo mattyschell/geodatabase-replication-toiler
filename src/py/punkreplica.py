@@ -101,8 +101,22 @@ class Replica(object):
 
                 shutil.rmtree(self.childgdb)
 
+            #done here
             shutil.copytree(self.fullyqualifiedchildname
                            ,self.childgdb)
+
+            #cleanup punkpscsclcscl.gdb.zip
+            if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedchildname
+                                               ,'zip'))):
+
+                os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
+                                          ,'zip'))
+
+            #cleanup punkpscsclcscl.gdb
+            if (os.path.exists(self.fullyqualifiedchildname)):
+
+                # not strictly necessary
+                shutil.rmtree(self.fullyqualifiedchildname)   
 
             return 'success'
 
