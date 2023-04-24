@@ -11,8 +11,8 @@ if __name__ == "__main__":
 
     pparent      = sys.argv[1] # C:\temp\cscl.gdb
     pchild       = sys.argv[2] # D:\temp\cscl.gdb
-    preplicaname = sys.argv[3] # punk
-    playerlist   = sys.argv[4] # nybb
+    preplicaname = sys.argv[3] # punkpscscl
+    playerlist   = sys.argv[4] # cscl.Borough,cscl.xyz
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     targetlog = os.path.join(os.environ['TARGETLOGDIR'] 

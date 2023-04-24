@@ -149,8 +149,6 @@ class Replica(object):
         # little punk kids never have schemas
         childfeatureclass = os.path.join(self.childgdb
                                          ,featurelayer.split('.')[-1])
-                                         
-        #print('childfeatureclass {0}'.format(childfeatureclass))
 
         childkount = int(arcpy.management.GetCount(childfeatureclass)[0])
 
@@ -160,8 +158,6 @@ class Replica(object):
         if "." in featurelayer:  
 
             sql = 'SELECT count(*) FROM {0}_evw'.format(featurelayer)
-            
-            #print('sql {0}'.format(sql))
 
             parentkount = cx_sde.selectavalue(self.parentgdb
                                              ,sql)
@@ -170,8 +166,6 @@ class Replica(object):
         
             parentfeatureclass = os.path.join(self.parentgdb
                                              ,featurelayer)
-                                             
-            # print('parentfeatureclass {0}'.format(parentfeatureclass))
                                              
             parentkount = int(arcpy.management.GetCount(parentfeatureclass)[0]) 
 
