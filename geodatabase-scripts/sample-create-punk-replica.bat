@@ -15,7 +15,7 @@ REM review
 set REPLICATOILER=%GISDIR%\geodatabase-replication-toiler
 set PYTHONPATH=%REPLICATOILER%\src\py
 set PROPY=c:\Progra~1\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe
-set TARGETLOGDIR=%GISDIR%\geodatabase-scripts\logs\create-punk-replica
+set TARGETLOGDIR=%GISDIR%\geodatabase-scripts\logs\create-punk-replica\%ENVIRONMENT%
 set BATLOG=%TARGETLOGDIR%\create-punk-replica.log
 REM failures send logs\create-punk-replica\create-punk-replica.bat
 REM success with checks send the most recent check log
@@ -33,7 +33,7 @@ echo. >> %BATLOG% && echo checking %SDEPARENT% comparing to %SDECHILD% on %date%
 )  
 echo. >> %BATLOG% && echo checking %QASDE% comparing to %SDECHILD% on %date% at %time% >> %BATLOG%
 %PROPY% %GISDIR%\geodatabase-replication-toiler\checkreplica.py %QASDE% %SDECHILD% %REPLICANAME% %QALAYERS% && (
-  %PROPY% %REPLICATOILER%\notify.py "Passed %REPLICANAME% replica comparison in %ENVIRONMENT%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
+  %PROPY% %REPLICATOILER%\notify.py "Passed %REPLICANAME% replica comparison in %ENVIRONMENT%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 0
 ) || (
-  %PROPY% %REPLICATOILER%\notify.py "Failed %REPLICANAME% replica comparison in %ENVIRONMENT%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
+  %PROPY% %REPLICATOILER%\notify.py "Failed %REPLICANAME% replica comparison in %ENVIRONMENT%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 0
 )  
