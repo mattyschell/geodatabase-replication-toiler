@@ -147,26 +147,39 @@ class Replica(object):
         # accept either cscl.centerline or centerline for featurelayer
 
         # little punk kids never have schemas
+
         childfeatureclass = os.path.join(self.childgdb
-                                         ,featurelayer.split('.')[-1])
+                                        ,featurelayer.split('.')[-1])
 
         childkount = int(arcpy.management.GetCount(childfeatureclass)[0])
 
         # either featurelayer formats are responsible parents  
-        # but we can't use arcpy 3 to access CSCL!    
-
+        # but we can't use arcpy 3 to access CSCL!
+        # (unless we are getting a count from a table)
+        
         if "." in featurelayer:  
 
             sql = 'SELECT count(*) FROM {0}_evw'.format(featurelayer)
 
-            parentkount = cx_sde.selectavalue(self.parentgdb
-                                             ,sql)
+            try:
+                parentkount = cx_sde.selectavalue(self.parentgdb
+                                                 ,sql)
+            except:
+
+                # relationship classes will bounce to here
+                parentfeatureclass = os.path.join(self.parentgdb
+                                                 ,featurelayer)
+                parentkount = int(arcpy.management.GetCount(parentfeatureclass)[0]) 
 
         else: 
         
+            # likely a relationship class
+            # this section is almost unreachable
+            # would need to be counting in the data owner schema, not
+            # from a read only schema. Since we are dropping the schema
             parentfeatureclass = os.path.join(self.parentgdb
                                              ,featurelayer)
-                                             
+            
             parentkount = int(arcpy.management.GetCount(parentfeatureclass)[0]) 
 
         return (parentkount - childkount)
