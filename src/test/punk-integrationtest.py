@@ -12,6 +12,7 @@ class ReplicaTestCase(unittest.TestCase):
         self.parentgdb    = os.environ['SDEPARENT']
         self.childgdb     = os.environ['SDECHILD']
         self.featureclass = os.environ['TARGETFC']
+        self.relationshipclass = os.environ['TARGETRELATIONSHIPCLASS']
 
         self.parentfeatureclass = os.path.join(self.parentgdb
                                               ,self.featureclass)
@@ -48,8 +49,18 @@ class ReplicaTestCase(unittest.TestCase):
 
         self.assertEqual(self.replica.compare(self.featureclass)
                         ,0)
+        
+    def test_dcomparerelationshipclass(self):
 
-    def test_ddelete(self):
+        # test that we can compare counts of attributed relationship classes
+        # will be empty but a count of 0 is a count I will allow it
+
+        self.assertEqual(self.replica.synchronize(),'success')
+
+        self.assertEqual(self.replica.compare(self.relationshipclass)
+                        ,0)
+
+    def test_edelete(self):
  
         self.replica.delete()
 
