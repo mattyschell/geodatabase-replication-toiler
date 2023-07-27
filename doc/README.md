@@ -1,29 +1,34 @@
 # Replica Setup In The Style That We Know and Love 
 
-These are the high level instructions that OTI uses to create "agency replicas" modified to use dummy data.  The detailed instructions are top secret and include references to actual data and agencies.
+These are the high level instructions that OTI uses to create "agency replicas" modified to demo the procedure with dummy data.  The detailed instructions are top secret and include references to actual data and agencies.
+
+The code in this repository uses modern ArcGIS Pro with python 3 but the instructions below will describe 32 bit classic ArcMap.  The secret procedure to create the secret agency replicas also uses ArcMap classic.
 
 ## Create Replica  
 
-1. Import somelines.shp into the parent enterprise geodatabase.  Verify that it does not have a column named globalid.
-2. Add globalids in the parent enterprise geodatabase.
-3. Register as versioned in the parent enterprise geodatabase
-4. Use ArcCatalog or ArcGIS Pro to copy and paste this feature class from the parent to the child ESRI Enterprise Geodatabase.  Standard import feature class will not work, this step must use sticky copy.
-5. Register as versioned in the child. ("We have been doing this just to be safe")
-6. Open ArcMap, the decriptions below will be for the ArcMap GUI.
-7. Add the feature class from the parent Enterprise Geodatabase to the map document.  
-8. Add the "Distributed Geodatabase Toolbar" that we know and love
-9. Choose create replica
-10. Choose one-way parent to child
-11. Register existing data only 
-12. Choose the child enterprise geodatabase as the "geodatabase to replicate to"
-13. Check "Show Advanced Options"! We are advanced, we simply must see these options.
-14. Choose Full Model. Do not check "use archiving to track changes."
-15. Choose full extent
-16. Uncheck replicate related data
-17. Toggle the amazing "All Records for Tables" toggler so it reads "Schema Only For Tables" which now means the opposite. 
-18. Next and do nothing
+1. Import src/test/resources/somelines.shp into a parent enterprise geodatabase schema. Choose a non-prod database where the DEFAULT version is not protected.
+2. Open the attribute table. Verify that it does not have a column named globalid.
+3. In Catalog right click on the imported feature class, select "Manage," and "Add Global Ids."
+4. In Catalog right click on the imported feature class, select "Manage," and "Register as Versioned."  Do not ever check that move edits to base option.
+5. Create an empty file geodatabase.  We'll use this for the child replica.
+6. Use ArcCatalog to copy and paste the imported feature class from the parent Enterprise Geodatabase to the child file geodatabase.  This step must use sticky copy, not import.
+7. In the secret agency replicas we have been registering the child feature classes as versioned "just to be safe." We'll skip this step for the child file geodatabase.
+8. Add the imported SOMELINES feature class from the parent Enterprise Geodatabase to the map document.  
+9. Add or locate the "Distributed Geodatabase Toolbar" that we know and love
+10. Click "Create Replica" 
+11. Choose "One-way replica" - "Parent to child" - "Next"
+12. Choose "Register existing data only" 
+13. Choose the child file geodatabase as the geodatabase to replicate to
+14. Give the replica a fancy name like Mimi
+14. Check "Show Advanced Options." We are advanced, we simply must see these options!
+15. Choose "Full Model." Do not check "use archiving to track changes." Next.
+16. Choose "The full extent of the data"
+17. Uncheck the "Replicate related data" check box
+18. Toggle the confounding "All Records for Tables" toggler button so it reads "Schema Only For Tables." It now means the opposite of what it says. 
+19. Next and "No further action"
+20. From the Distributed Geodatabase toolbar select "Manage Replicas" and review
 
-## Fake Edits to Test
+## Make Some Edits For Testing
 
 1. On the parent create a new version below default
 2. Change to the version 
@@ -36,12 +41,14 @@ These are the high level instructions that OTI uses to create "agency replicas" 
 
 ## Synchronize the changes
 
-1. Find the "Synchronize Changes" tool
+1. Find the "Synchronize Changes" tool on the toolbar that we know and love
 2. Choose the parent geodatabase as geodatabase 1
-3. Choose the replica and child geodatabase as geodatabase 2
-4. Direction is from 1 to 2
-5. Conflicts in favor of gdb1
-6. Conflicts defined by object
+3. Choose the replica and child file geodatabase as geodatabase 2
+4. Direction is from geodatabase 1 to geodatabase 2
+5. NA for child file geodatabases: Conflicts in favor of gdb1
+6. NA for child file geodatabases: Conflicts defined by object
+7. Finish
+8. Review the child file geodatabase. Synchronicity as usual.
 
 
 
