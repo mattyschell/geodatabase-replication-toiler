@@ -1,5 +1,6 @@
 import os
 import unittest
+import tempfile
 
 import arcpy
 import punkreplica
@@ -8,6 +9,10 @@ class ReplicaTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
+
+        # reminder that these are file geodatabases
+        # the tests will start with a file geodatabase
+        # in the resources directory with some simple data
 
         self.parentgdb    = os.environ['SDEPARENT']
         self.childgdb     = os.environ['SDECHILD']
@@ -59,8 +64,26 @@ class ReplicaTestCase(unittest.TestCase):
 
         self.assertEqual(self.replica.compare(self.relationshipclass)
                         ,0)
+        
+    def test_esynchfail(self):
 
-    def test_edelete(self):
+        # synch to an illegal path
+        self.childgdb  = os.path.join(tempfile.gettempdir()
+                                     ,'<>:') 
+
+        # just overrides the child and child path
+        self.replica = punkreplica.Replica(self.parentgdb
+                                          ,self.childgdb
+                                          ,'punk')
+        
+        self.assertEqual(self.replica.create(),'success')
+        
+        retval = self.replica.synchronize()
+
+        # fail: cant copy xxx.gdb to yyyy\<>:
+        self.assertTrue(retval.startswith('fail'))
+
+    def test_fdelete(self):
  
         self.replica.delete()
 

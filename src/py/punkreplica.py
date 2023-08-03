@@ -6,8 +6,8 @@ import arcpy
 import cx_sde
 
 
-# loosely follows standard replica wrapper
-# punk replicas are ephemeral
+# loosely follows the api of replica.py
+# punk replicas are ephemeral however
 
 class Replica(object):
 
@@ -26,15 +26,23 @@ class Replica(object):
         # D:\temp\parent\punkcscl.gdb
         self.fullyqualifiedparentname = os.path.join(os.path.dirname(self.parentgdb)
                                                     ,punkgdb)
-
         self.fullyqualifiedchildname = os.path.join(os.path.dirname(self.childgdb)
                                                    ,punkgdb)
+
+        self.childzip  = '{0}.{1}'.format(self.fullyqualifiedchildname
+                                         ,'zip')
+        self.parentzip = '{0}.{1}'.format(self.fullyqualifiedparentname
+                                         ,'zip')
 
     def create(self):
 
         # in a punk geodatabase replica creation is zipping 
         # a file geodatabase. PUNK AF
         # no data list inputs, replicate the full geodatabase or go home
+
+        # create
+        # D:\temp\parent\cscl.gdb
+        # D:\temp\parent\punkcscl.gdb.zip
 
         if not (os.path.exists(self.parentgdb)):
 
@@ -45,11 +53,10 @@ class Replica(object):
             os.remove(self.fullyqualifiedparentname)
 
         shutil.make_archive(self.fullyqualifiedparentname
-                            ,'zip'
-                            ,self.parentgdb)
+                           ,'zip'
+                           ,self.parentgdb)
 
-        if not (os.path.exists('{0}.{1}'.format(self.fullyqualifiedparentname
-                                                ,'zip'))):
+        if not (os.path.exists(self.parentzip)):
             
             return 'fail'
 
@@ -59,68 +66,79 @@ class Replica(object):
 
     def synchronize(self):
 
-        # create
-        # D:\temp\parent\cscl.gdb
-        # D:\temp\parent\punkcscl.gdb.zip
+        # caller must create() and handle failures
+        # sychronize transfers a zipped gdb to the child
 
-        if (self.create() == 'success'):
+        # we tend to synchronize across flakey networks
+        # at weird hours so everything is wrapped in try except
 
-            if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedchildname
-                                               ,'zip'))):
+        if (os.path.exists(self.childzip)):
 
-                # not strictly necessary
-                os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
-                                          ,'zip'))
+            # not strictly necessary
+            try:
+                os.remove(self.childzip)
+            except:
+                return 'fail: cant remove defunct zipped child {0}'.format(self.childzip)
 
-            # copy to D:\temp\child\punkcscl.gdb.zip 
+        # copy to D:\temp\child\punkcscl.gdb.zip 
 
-            shutil.copy('{0}.{1}'.format(self.fullyqualifiedparentname
-                                        ,'zip')
-                       ,'{0}.{1}'.format(self.fullyqualifiedchildname
-                                        ,'zip')
-                       )
-       
-            # unzip to 
-            # D:\temp\child\punkcscl.gdb 
+        try:
+            shutil.copy(self.parentzip
+                       ,self.childzip)
+        except:
+            return 'fail: cant copy {0} to {1}'.format(self.parentzip
+                                                      ,self.childzip)
+    
+        # unzip to 
+        # D:\temp\child\punkcscl.gdb 
 
-            if (os.path.exists(self.fullyqualifiedchildname)):
+        if (os.path.exists(self.fullyqualifiedchildname)):
 
-                # not strictly necessary
-                shutil.rmtree(self.fullyqualifiedchildname)                    
+            # not strictly necessary
+            try:
+                shutil.rmtree(self.fullyqualifiedchildname)    
+            except:
+                return 'fail: cant remove defunct {0}'.format(self.fullyqualifiedchildname)                
 
-            shutil.unpack_archive('{0}.{1}'.format(self.fullyqualifiedchildname
-                                                  ,'zip')
+        try:
+            shutil.unpack_archive(self.childzip
                                  ,self.fullyqualifiedchildname
-                                 ,'zip')
+                                ,'zip')
+        except:
+            return 'fail: cant unpack {0} to {1}'.format(self.childzip
+                                                        ,self.fullyqualifiedchildname)
 
-            # synchronize! :-)
-            # copy D:\temp\child\punkcscl.gdb
-            # to   D:\temp\child\cscl.gdb
+        # synchronize! :-)
+        # copy D:\temp\child\punkcscl.gdb
+        # to   D:\temp\child\cscl.gdb
 
-            if (os.path.exists(self.childgdb)):
+        if (os.path.exists(self.childgdb)):
 
+            try:
                 shutil.rmtree(self.childgdb)
+            except:
+                return 'fail: cant remove defunct {0}'.format(self.childgdb)
 
-            #done here
+        #done here
+        try:
             shutil.copytree(self.fullyqualifiedchildname
                            ,self.childgdb)
+        except:
+            return 'fail: cant copy {0} to {1}'.format(self.fullyqualifiedchildname
+                                                      ,self.childgdb)
 
-            #cleanup punkpscsclcscl.gdb.zip
-            if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedchildname
-                                               ,'zip'))):
+        #cleanup punkpscsclcscl.gdb.zip
+        if (os.path.exists(self.childzip)):
 
-                os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
-                                          ,'zip'))
+            os.remove(self.childzip)
 
-            #cleanup punkpscsclcscl.gdb
-            if (os.path.exists(self.fullyqualifiedchildname)):
+        #cleanup punkpscsclcscl.gdb
+        if (os.path.exists(self.fullyqualifiedchildname)):
 
-                # not strictly necessary
-                shutil.rmtree(self.fullyqualifiedchildname)   
+            # not strictly necessary
+            shutil.rmtree(self.fullyqualifiedchildname)   
 
-            return 'success'
-
-        return 'fail'
+        return 'success'
 
     def delete(self):
 
@@ -130,15 +148,11 @@ class Replica(object):
         if (os.path.exists(self.fullyqualifiedchildname)):
             shutil.rmtree(self.fullyqualifiedchildname) 
 
-        if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedchildname
-                                           ,'zip'))):
-            os.remove('{0}.{1}'.format(self.fullyqualifiedchildname
-                                      ,'zip'))
+        if (os.path.exists(self.childzip)):
+            os.remove(self.childzip)
                                       
-        if (os.path.exists('{0}.{1}'.format(self.fullyqualifiedparentname
-                                           ,'zip'))):
-            os.remove('{0}.{1}'.format(self.fullyqualifiedparentname
-                                      ,'zip'))
+        if (os.path.exists(self.parentzip)):
+            os.remove(self.parentzip)
 
     def compare(self
                ,featurelayer):
