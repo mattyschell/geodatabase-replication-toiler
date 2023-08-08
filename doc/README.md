@@ -48,7 +48,7 @@ Our goal is to stand up a parent and child dataset that are identical.
 7. Delete the edit version
 
 
-## Synchronize the changes
+## Synchronize The Changes
 
 1. Find the "Synchronize Changes" tool on the toolbar that we know and love
 2. Choose the parent geodatabase as geodatabase 1
@@ -59,5 +59,19 @@ Our goal is to stand up a parent and child dataset that are identical.
 7. Finish
 8. Review the child file geodatabase. Synchronicity as usual.
 
+##  Unregister A Replica
 
+1. From the distributed geodatabase toolbar select "Manage Replicas"
+2. Right click on the replica and select "unregister"
+3. When asked if you are sure click OK
+4. Guess what you are not done yet
+5. In the catalog tree navigate to the child geodatabase
+6. Right click on it and select "Distributed Database" and "Manage Replicas"
+7. Right click on the child replica and select "unregister"
+8. When asked if you are sure click OK
+
+
+
+
+![amazingpencil](https://github.com/mattyschell/geodatabase-replication-toiler/blob/main/doc/images/amazingpencil.png)
 
