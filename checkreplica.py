@@ -35,7 +35,7 @@ if __name__ == "__main__":
             
             kount = checkreplica.compare(featurelayer)
 
-            if kount > 0:
+            if kount != 0:
                 result = 'fail'
 
         except:

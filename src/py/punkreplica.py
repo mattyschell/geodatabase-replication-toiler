@@ -196,5 +196,5 @@ class Replica(object):
             
             parentkount = int(arcpy.management.GetCount(parentfeatureclass)[0]) 
 
-        return (parentkount - childkount)
+        return int(parentkount - childkount)
    
