@@ -1,5 +1,6 @@
 import os
 import shutil
+from io import StringIO
 import arcpy
 
 # todo: get this outta here
@@ -44,21 +45,35 @@ class Replica(object):
         # D:\temp\parent\cscl.gdb
         # D:\temp\parent\punkcscl.gdb.zip
 
+        # always catch errors and return clues
+        # we want to triage emails not RDP to poke around in logs if at all possible
+
         if not (os.path.exists(self.parentgdb)):
 
-            return 'fail parent {0} doesnt exist'.format(self.parentgdb)
+            return 'fail: parent {0} doesnt exist'.format(self.parentgdb)
         
         if os.path.exists(self.fullyqualifiedparentname):
             
-            os.remove(self.fullyqualifiedparentname)
+            try:
+                os.remove(self.fullyqualifiedparentname)
+            except:
+                return 'fail: cant remove {0}'.format(self.fullyqualifiedparentname)
 
-        shutil.make_archive(self.fullyqualifiedparentname
-                           ,'zip'
-                           ,self.parentgdb)
+        try:
+            shutil.make_archive(self.fullyqualifiedparentname
+                               ,'zip'
+                               ,self.parentgdb)
+        except Exception as e:
+            error_message = StringIO()
+            error_message.write(str(e))
+            error_message.seek(0)
+            return 'fail: zipping {0} returns {1}'.format(self.fullyqualifiedparentname
+                                                         ,error_message.read()) 
+        
 
         if not (os.path.exists(self.parentzip)):
             
-            return 'fail'
+            return 'fail: after zipping {0} doesnt exist'.format(self.parentzip)
 
         else:
 

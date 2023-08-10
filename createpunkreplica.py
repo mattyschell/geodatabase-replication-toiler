@@ -32,8 +32,9 @@ if __name__ == "__main__":
     retval = babypunkreplica.create()
 
     if retval != 'success':        
-        logging.error('zipping up {0} returned {1}'.format(babypunkreplica.parentgdb
-                                                          ,retval))
+        logging.error('zipping up {0} returned{1}{2}'.format(babypunkreplica.parentgdb
+                                                            ,'\n'
+                                                            ,retval))
         exit(1)
 
     logging.info('Synchronizing baby {0} replica from {1}'.format(babypunkreplica.childgdb
@@ -42,8 +43,9 @@ if __name__ == "__main__":
     retval = babypunkreplica.synchronize()
 
     if retval != 'success':
-        logging.error('synchronizing {0} returned {1}'.format(babypunkreplica.childgdb
-                                                             ,retval))
+        logging.error('synchronizing {0} returned{1}{2}'.format(babypunkreplica.childgdb
+                                                               ,'\n'
+                                                               ,retval))
         exit(1)
 
     else:

@@ -23,17 +23,17 @@ echo starting up our work on %REPLICANAME% on %date% at %time% > %BATLOG%
 %PROPY% %GISDIR%\geodatabase-replication-toiler\createpunkreplica.py %SDEPARENT% %SDECHILD% %REPLICANAME% && (
   echo. >> %BATLOG% && echo replicated %SDEPARENT% to %SDECHILD% on %date% at %time% >> %BATLOG%
 ) || (
-  %PROPY% %REPLICATOILER%\notify.py "Failed to replicate %SDEPARENT% to %SDECHILD%" %NOTIFY% "create-punk-replica" && EXIT /B 1
+  %PROPY% %REPLICATOILER%\notify.py "GIS %ENVIRONMENT%: failed to replicate %REPLICANAME%" %NOTIFY% "createpunkreplica-%REPLICANAME%" && EXIT /B 1
 )  
 echo. >> %BATLOG% && echo checking %SDEPARENT% comparing to %SDECHILD% on %date% at %time% >> %BATLOG%
 %PROPY% %GISDIR%\geodatabase-replication-toiler\checkreplica.py %SDEPARENT% %SDECHILD% %REPLICANAME% %REPLICACHECKLAYERS% && (
   echo. >> %BATLOG% && echo passed check %SDEPARENT% to %SDECHILD% on %date% at %time% >> %BATLOG%
 ) || (
-  %PROPY% %REPLICATOILER%\notify.py "Failed check comparing %SDEPARENT% to %SDECHILD%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
+  %PROPY% %REPLICATOILER%\notify.py "GIS %ENVIRONMENT%: failed check comparing %SDEPARENT% to %SDECHILD%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 1
 )  
 echo. >> %BATLOG% && echo checking %QASDE% comparing to %SDECHILD% on %date% at %time% >> %BATLOG%
 %PROPY% %GISDIR%\geodatabase-replication-toiler\checkreplica.py %QASDE% %SDECHILD% %REPLICANAME% %QALAYERS% && (
-  %PROPY% %REPLICATOILER%\notify.py "Passed %REPLICANAME% replica comparison in %ENVIRONMENT%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 0
+  %PROPY% %REPLICATOILER%\notify.py "GIS %ENVIRONMENT% QA: Passed %REPLICANAME% replica comparison" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 0
 ) || (
-  %PROPY% %REPLICATOILER%\notify.py "Failed %REPLICANAME% replica comparison in %ENVIRONMENT%" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 0
-)  
+  %PROPY% %REPLICATOILER%\notify.py "GIS %ENVIRONMENT% QA: Failed %REPLICANAME% replica comparison" %NOTIFY% "checkreplica-%REPLICANAME%" && EXIT /B 0
+)   
