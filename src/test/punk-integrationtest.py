@@ -14,9 +14,9 @@ class ReplicaTestCase(unittest.TestCase):
         # the tests will start with a file geodatabase
         # in the resources directory with some simple data
 
-        self.parentgdb    = os.environ['SDEPARENT']
-        self.childgdb     = os.environ['SDECHILD']
-        self.featureclass = os.environ['TARGETFC']
+        self.parentgdb         = os.environ['SDEPARENT']
+        self.childgdb          = os.environ['SDECHILD']
+        self.featureclass      = os.environ['TARGETFC']
         self.relationshipclass = os.environ['TARGETRELATIONSHIPCLASS']
 
         self.parentfeatureclass = os.path.join(self.parentgdb
@@ -31,24 +31,32 @@ class ReplicaTestCase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(self):
- 
+        
+        self.replica.delete()
+
+    def tearDown(self):
+        
         self.replica.delete()
 
     def test_acreate(self):
 
-        self.assertEqual(self.replica.create(),'success')      
+        self.assertEqual(self.replica.create(),'success')     
 
     def test_bsynchronize(self):
 
+        self.replica.create()
+
         self.assertEqual(self.replica.synchronize(),'success')
-        
+    
         parentcount = arcpy.management.GetCount(self.parentfeatureclass)
         childcount  = arcpy.management.GetCount(self.childfeatureclass)
-     
+ 
         self.assertEqual(parentcount[0]
                         ,childcount[0])
 
     def test_ccompare(self):
+
+        self.replica.create()
 
         self.assertEqual(self.replica.synchronize(),'success')
 
@@ -59,12 +67,13 @@ class ReplicaTestCase(unittest.TestCase):
 
         # test that we can compare counts of attributed relationship classes
         # will be empty but a count of 0 is a count I will allow it
+        self.replica.create()
 
         self.assertEqual(self.replica.synchronize(),'success')
 
         self.assertEqual(self.replica.compare(self.relationshipclass)
                         ,0)
-        
+
     def test_esynchfail(self):
 
         # synch to an illegal path

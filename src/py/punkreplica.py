@@ -1,6 +1,7 @@
 import os
 import shutil
 from io import StringIO
+import re
 import arcpy
 
 # todo: get this outta here
@@ -14,7 +15,7 @@ class Replica(object):
 
     def __init__(self
                 ,parentgdb # D:\temp\parent\cscl.gdb
-                ,childgdb  # D:\temp\child\cscl.gdb
+                ,childgdb  # D:\temp\child\cscl.gdb or //server/cscl.gdb
                 ,name):    # punk
 
         self.parentgdb = parentgdb
@@ -29,21 +30,34 @@ class Replica(object):
                                                     ,punkgdb)
         self.fullyqualifiedchildname = os.path.join(os.path.dirname(self.childgdb)
                                                    ,punkgdb)
+        
+        if (self.childgdb.startswith("""//""") 
+        or  self.childgdb.startswith("""\\""")
+        or  re.search(r'[e-zE-Z]:',self.childgdb)):
+            
+            # any drive starting with \\s or a letter above D
+            # dont zip and unzip across networks
+            # just streams the compressed and full files
+            # for an additional round trip
+            self.childzip = 'no'
+            self.parentzip = 'no'
 
-        self.childzip  = '{0}.{1}'.format(self.fullyqualifiedchildname
-                                         ,'zip')
-        self.parentzip = '{0}.{1}'.format(self.fullyqualifiedparentname
-                                         ,'zip')
+        else:
+
+            self.childzip  = '{0}.{1}'.format(self.fullyqualifiedchildname
+                                             ,'zip')
+            self.parentzip = '{0}.{1}'.format(self.fullyqualifiedparentname
+                                             ,'zip')
 
     def create(self):
 
-        # in a punk geodatabase replica creation is zipping 
+        # in a punk geodatabase replica creation is renaming and compressing 
         # a file geodatabase. PUNK AF
         # no data list inputs, replicate the full geodatabase or go home
 
         # create
         # D:\temp\parent\cscl.gdb
-        # D:\temp\parent\punkcscl.gdb.zip
+        # D:\temp\parent\punkcscl.gdb(.zip)
 
         # always catch errors and return clues
         # we want to triage emails not RDP to poke around in logs if at all possible
@@ -56,28 +70,42 @@ class Replica(object):
             
             try:
                 os.remove(self.fullyqualifiedparentname)
-            except:
-                return 'fail: cant remove {0}'.format(self.fullyqualifiedparentname)
 
-        try:
-            shutil.make_archive(self.fullyqualifiedparentname
-                               ,'zip'
-                               ,self.parentgdb)
-        except Exception as e:
-            error_message = StringIO()
-            error_message.write(str(e))
-            error_message.seek(0)
-            return 'fail: zipping {0} returns {1}'.format(self.fullyqualifiedparentname
-                                                         ,error_message.read()) 
-        
+            except Exception as e:
+                error_message = StringIO()
+                error_message.write(str(e))
+                error_message.seek(0)
+                return 'fail: removing {0} returns {1}'.format(self.fullyqualifiedparentname
+                                                              ,error_message.read()) 
 
-        if not (os.path.exists(self.parentzip)):
+        if self.parentzip != 'no':
+
+            try:
+                shutil.make_archive(self.fullyqualifiedparentname
+                                   ,'zip'
+                                   ,self.parentgdb)
+            except Exception as e:
+                error_message = StringIO()
+                error_message.write(str(e))
+                error_message.seek(0)
+                return 'fail: zipping {0} returns {1}'.format(self.fullyqualifiedparentname
+                                                             ,error_message.read()) 
             
-            return 'fail: after zipping {0} doesnt exist'.format(self.parentzip)
+
+            if not (os.path.exists(self.parentzip)):
+                
+                return 'fail: after zipping {0} doesnt exist'.format(self.parentzip)
 
         else:
 
-            return 'success'
+            shutil.copytree(self.parentgdb
+                           ,self.fullyqualifiedparentname)
+            
+            if not (os.path.exists(self.fullyqualifiedparentname)):
+                
+                return 'fail: after copying {0} doesnt exist'.format(self.parentzip)
+
+        return 'success'
 
     def synchronize(self):
 
@@ -87,25 +115,14 @@ class Replica(object):
         # we tend to synchronize across flakey networks
         # at weird hours so everything is wrapped in try except
 
-        if (os.path.exists(self.childzip)):
+        if (self.childzip != 'no' and 
+            os.path.exists(self.childzip)):
 
             # not strictly necessary
             try:
                 os.remove(self.childzip)
             except:
                 return 'fail: cant remove defunct zipped child {0}'.format(self.childzip)
-
-        # copy to D:\temp\child\punkcscl.gdb.zip 
-
-        try:
-            shutil.copy(self.parentzip
-                       ,self.childzip)
-        except:
-            return 'fail: cant copy {0} to {1}'.format(self.parentzip
-                                                      ,self.childzip)
-    
-        # unzip to 
-        # D:\temp\child\punkcscl.gdb 
 
         if (os.path.exists(self.fullyqualifiedchildname)):
 
@@ -115,33 +132,49 @@ class Replica(object):
             except:
                 return 'fail: cant remove defunct {0}'.format(self.fullyqualifiedchildname)                
 
-        try:
-            shutil.unpack_archive(self.childzip
-                                 ,self.fullyqualifiedchildname
-                                ,'zip')
-        except:
-            return 'fail: cant unpack {0} to {1}'.format(self.childzip
-                                                        ,self.fullyqualifiedchildname)
+        if self.childzip != 'no':
 
+            # copy to D:\temp\child\punkcscl.gdb.zip 
+
+            try:
+                shutil.copy(self.parentzip
+                           ,self.childzip)
+            except:
+                return 'fail: cant copy {0} to {1}'.format(self.parentzip
+                                                          ,self.childzip)
+            
+            try:
+                shutil.unpack_archive(self.childzip
+                                     ,self.fullyqualifiedchildname
+                                     ,'zip')
+            except:
+                return 'fail: cant unpack {0} to {1}'.format(self.childzip
+                                                            ,self.fullyqualifiedchildname)
+    
+        else:
+            
+            try:
+                shutil.copytree(self.fullyqualifiedparentname
+                               ,self.fullyqualifiedchildname)
+            except:
+                return 'fail: cant copy {0} to {1}'.format(self.parentzip
+                                                          ,self.childzip)
+
+        
         # synchronize! :-)
         # copy D:\temp\child\punkcscl.gdb
         # to   D:\temp\child\cscl.gdb
-
-        if (os.path.exists(self.childgdb)):
-
-            try:
-                shutil.rmtree(self.childgdb)
-            except:
-                return 'fail: cant remove defunct {0}'.format(self.childgdb)
-
-        #done here
         try:
             shutil.copytree(self.fullyqualifiedchildname
-                           ,self.childgdb)
-        except:
-            return 'fail: cant copy {0} to {1}'.format(self.fullyqualifiedchildname
-                                                      ,self.childgdb)
-
+                            ,self.childgdb)
+        except Exception as e:
+            error_message = StringIO()
+            error_message.write(str(e))
+            error_message.seek(0)
+            return 'fail: copying {0} to {1} returns {2}'.format(self.fullyqualifiedparentname
+                                                                ,self.childgdb
+                                                                ,error_message.read())
+         
         #cleanup punkpscsclcscl.gdb.zip
         if (os.path.exists(self.childzip)):
 
@@ -157,16 +190,19 @@ class Replica(object):
 
     def delete(self):
 
-        if (os.path.exists(self.childgdb)):
+        if os.path.exists(self.childgdb):
             shutil.rmtree(self.childgdb)
 
-        if (os.path.exists(self.fullyqualifiedchildname)):
+        if os.path.exists(self.fullyqualifiedchildname):
             shutil.rmtree(self.fullyqualifiedchildname) 
 
-        if (os.path.exists(self.childzip)):
+        if os.path.exists(self.fullyqualifiedparentname):
+            shutil.rmtree(self.fullyqualifiedparentname) 
+
+        if os.path.exists(self.childzip):
             os.remove(self.childzip)
                                       
-        if (os.path.exists(self.parentzip)):
+        if os.path.exists(self.parentzip):
             os.remove(self.parentzip)
 
     def compare(self
