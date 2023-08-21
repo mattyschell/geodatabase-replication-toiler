@@ -1,8 +1,7 @@
 *.pyc
 __pycache__
 scratch
-integrationtest_*
 replicate-subaddress.bat
-*-integrationtest.bat
 *load2*
 *.bat
+working-*
