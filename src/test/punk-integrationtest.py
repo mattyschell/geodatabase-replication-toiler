@@ -27,15 +27,13 @@ class ReplicaTestCase(unittest.TestCase):
         
         self.replica = punkreplica.Replica(self.parentgdb
                                           ,self.childgdb
-                                          ,'punk')
+                                          ,'punktest')
 
     @classmethod
     def tearDownClass(self):
-        
         self.replica.delete()
 
     def tearDown(self):
-        
         self.replica.delete()
 
     def test_acreate(self):
@@ -83,7 +81,7 @@ class ReplicaTestCase(unittest.TestCase):
         # just overrides the child and child path
         self.replica = punkreplica.Replica(self.parentgdb
                                           ,self.childgdb
-                                          ,'punk')
+                                          ,'punktest')
         
         self.assertEqual(self.replica.create(),'success')
         
