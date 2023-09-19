@@ -20,30 +20,30 @@ if __name__ == "__main__":
     logging.basicConfig(filename=targetlog
                        ,level=logging.INFO)
 
-    babypunkreplica = punkreplica.Replica(parentgdb
-                                         ,childgdb
-                                         ,replicaname)
+    mypunkreplica = punkreplica.Replica(parentgdb
+                                       ,childgdb
+                                       ,replicaname)
 
-    logging.info('Creating baby {0} replica from {1}'.format(babypunkreplica.name
-                                                            ,babypunkreplica.parentgdb))
+    logging.info('Creating punk {0} replica from {1}'.format(mypunkreplica.name
+                                                            ,mypunkreplica.parentgdb))
 
     # Possible
     # PermissionError: [Errno 13] Permission denied: '_gdb.xxxxx.1812.41680.sr.lock'
-    retval = babypunkreplica.create()
+    retval = mypunkreplica.create()
 
     if retval != 'success':        
-        logging.error('zipping up {0} returned{1}{2}'.format(babypunkreplica.parentgdb
-                                                            ,'\n'
-                                                            ,retval))
+        logging.error('creating {0} returned{1}{2}'.format(mypunkreplica.fullyqualifiedparentname
+                                                          ,'\n'
+                                                          ,retval))
         exit(1)
 
-    logging.info('Synchronizing baby {0} replica from {1}'.format(babypunkreplica.childgdb
-                                                                 ,babypunkreplica.parentgdb))
+    logging.info('Synchronizing {0} replica from {1}'.format(mypunkreplica.childgdb
+                                                            ,mypunkreplica.fullyqualifiedparentname))
 
-    retval = babypunkreplica.synchronize()
+    retval = mypunkreplica.synchronize()
 
     if retval != 'success':
-        logging.error('synchronizing {0} returned{1}{2}'.format(babypunkreplica.childgdb
+        logging.error('synchronizing {0} returned{1}{2}'.format(mypunkreplica.childgdb
                                                                ,'\n'
                                                                ,retval))
         exit(1)
