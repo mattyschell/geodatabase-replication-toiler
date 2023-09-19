@@ -117,9 +117,32 @@ class Replica(object):
         # synchronize! :-)
         # copy childpath\departmentreplica-dev-project.gdb
         # to   childpath\project.gdb
-        retval = self.copytree(self.fullyqualifiedchildname
-                              ,self.childgdb)
-        
+        # by 
+        # delete childpath\project.gdb
+        # rename childpath\departmentreplica-dev-project.gdb -> childpath\project.gdb
+
+        if os.path.exists(self.childgdb):
+            
+            try:
+                shutil.rmtree(self.childgdb)
+            except Exception as e:
+                error_message = StringIO()
+                error_message.write(str(e))
+                error_message.seek(0)
+                return 'fail: removing {0} returns {1}'.format(self.childgdb
+                                                              ,error_message.read()) 
+
+        try:
+            shutil.move(self.fullyqualifiedchildname, 
+                        self.childgdb)
+        except Exception as e:
+                error_message = StringIO()
+                error_message.write(str(e))
+                error_message.seek(0)
+                return 'fail: moving {0} to {1} returns {2}'.format(self.fullyqualifiedchildname
+                                                                   ,self.childgdb
+                                                                   ,error_message.read()) 
+
         if retval != 'success':
             return retval
 
