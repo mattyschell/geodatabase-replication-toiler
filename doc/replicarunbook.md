@@ -1,6 +1,6 @@
 ## Replica Hotline Runbook
 
-This runbook is intended to help team members review and debug issues encountered in ESRI geodatabase replication. The scope is limited to the existing replica setup in the legacy CSCL environment.
+This runbook is intended to help team members review and debug issues encountered in ESRI geodatabase replication. The scope is limited to the existing replica setup in the legacy CSCL environment. The CSCL team may maintain their own replica investigation runbooks but if so they do not share them. 
 
 #### 1. Acknowledge the issue reported by the replica user
 
@@ -35,7 +35,17 @@ ERROR: 2025-11-08 02:01:33,398 - ERROR 000582: Error occurred during execution. 
 INFO: 2025-11-08 02:01:33,398 - Spatial data synchronization failed.
 ```
 
-#### 5. Review the detailed .dat replica log.  
+If the log looks like this skip to step 6.  
+
+#### 5. Review task scheduler
+
+The replica scripts do not try/catch/report most unhandled exceptions. If there are no recent lines written to the first replica log you may have an unhandled exception to track down.
+
+Take a look at Task Scheduler for this replica.  The task will have a History tab (it is slow to load).  Check that it has been running.  To the right check the column "Last Run Result". If the last run result is something cryptic between parentheses (0x...) it is probably an unhandled exception.
+
+To get a read on the unhandled exception you may have to run the script from the command line to see what gets spewed to the screen.
+
+#### 6. Review the detailed .dat replica log.  
 
 This is the raw output from the ESRI synchronize changes tool and contains a few lines per dataset. You will find it in REPLICATIONS\replica_logs. Your colleagues have configured all replica synchronizations to write to a single log.
 
@@ -47,7 +57,7 @@ Here is a sample error message.
 
 If the source of the replica failure is bad data the steps above will guide you toward a specific set of edits on a specific date.  Bear in mind that the edit causing the problem may be a deletion.  In this case you will not see the bad data in the parent geodatabase.
 
-#### 6. Review geodatabase archive (if appropriate) 
+#### 7. Review geodatabase archive (if appropriate) 
 
 Use the archive functionality in ESRI desktop software to review edits made in the parent database. Right click on the xxx.sde connection file and select "Geodatabase Connection Properties." Then "Connect using a specific date and time."
 
@@ -59,11 +69,11 @@ Investigate datasets indicated in the logs before and after the failure date. A 
 * One day prior to failure: Bad data removed from parent
 * Date of failure: "Error while deleting"
 
-#### 7. Return your .sde connections to connect to DEFAULT (if appropriate) 
+#### 8. Return your .sde connections to connect to DEFAULT (if appropriate) 
 
 Do not forget. 
 
-#### 8. Clean up bad data (if appropriate)
+#### 9. Clean up bad data (if appropriate)
 
 If you are confident that you have ID'd bad data then clean it up. Cleanup may need to be performed on the child by manually deleting the bad data.
 
@@ -71,7 +81,7 @@ Our most popular issue that wrecks replicas is when users add temporary "junk" r
 
 ![junk](images/junk.png)
 
-#### 9. Synchronize replicas (if appropriate)
+#### 10. Synchronize replicas (if appropriate)
 
 Perform cleanup and replica synchronization re-runs one at a time. Start in a non-production environment if possible.
 
