@@ -41,7 +41,7 @@ If the log looks like this skip to step 6.
 
 The replica scripts do not try/catch/report most unhandled exceptions. If there are no recent lines written to the first replica log you may have an unhandled exception to track down.
 
-Take a look at Task Scheduler for this replica.  The task will have a History tab (it is slow to load).  Check that it has been running.  To the right check the column "Last Run Result". If the last run result is something cryptic between parentheses (0x...) it is probably an unhandled exception.
+Take a look at Task Scheduler for this replica.  The task will have a History tab (it is slow to load).  Check that the task has has been running.  To the right check the column "Last Run Result". If the last run result is something cryptic between parentheses (0x...) it is probably an unhandled exception.
 
 To get a read on the unhandled exception you may have to run the script from the command line to see what gets spewed to the screen.
 
