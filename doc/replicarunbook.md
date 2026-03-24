@@ -45,6 +45,14 @@ Take a look at Task Scheduler for this replica.  The task will have a History ta
 
 To get a read on the unhandled exception you may have to run the script from the command line to see what gets spewed to the screen.
 
+#### 5a. Spew to the Screen
+
+Open a command prompt with the same user that executes the script from task scheduler. Change directory into the directory indicated in task scheduler.
+
+Run the .bat file.  See the spew.
+
+If the spew is "cannot get exclusive schema lock" this is misleading.  The parent replica should have permissions on the child to disconnect all users. 
+
 #### 6. Review the detailed .dat replica log.  
 
 This is the raw output from the ESRI synchronize changes tool and contains a few lines per dataset. You will find it in REPLICATIONS\replica_logs. Your colleagues have configured all replica synchronizations to write to a single log.
